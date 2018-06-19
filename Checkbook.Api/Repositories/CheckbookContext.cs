@@ -1,4 +1,6 @@
-﻿namespace Checkbook.Api.Repositories
+﻿// Copyright (c) Palouse Coding Congolmeration. All Rights Reserved.
+
+namespace Checkbook.Api.Repositories
 {
     using Checkbook.Api.Models;
     using Microsoft.EntityFrameworkCore;
@@ -20,6 +22,6 @@
         /// <summary>
         /// Gets or sets the database set used to manage the transactions.
         /// </summary>
-        public DbSet<Transaction> Transactions { get; set; }
+        public virtual DbSet<Transaction> Transactions { get; set; }
     }
 }

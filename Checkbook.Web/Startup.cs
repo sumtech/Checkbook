@@ -1,4 +1,6 @@
-﻿namespace Checkbook.Web
+﻿// Copyright (c) Palouse Coding Congolmeration. All Rights Reserved.
+
+namespace Checkbook.Web
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;

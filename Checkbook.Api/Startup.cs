@@ -1,4 +1,6 @@
-﻿namespace Checkbook.Api
+﻿// Copyright (c) Palouse Coding Congolmeration. All Rights Reserved.
+
+namespace Checkbook.Api
 {
     using Checkbook.Api.Repositories;
     using Microsoft.AspNetCore.Builder;

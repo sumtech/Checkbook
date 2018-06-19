@@ -8,6 +8,7 @@
     <StartupObject></StartupObject>
     <ApplicationIcon />
     <Win32Resource />
+    <AssemblyName>Checkbook.Api</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

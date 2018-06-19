@@ -1,4 +1,6 @@
-﻿namespace Checkbook.Api.Repositories
+﻿// Copyright (c) Palouse Coding Congolmeration. All Rights Reserved.
+
+namespace Checkbook.Api.Repositories
 {
     using System;
     using System.Collections.Generic;
@@ -14,7 +16,7 @@
         /// <summary>
         /// The context for communicating with the checkbook database.
         /// </summary>
-        private CheckbookContext context;
+        private readonly CheckbookContext context;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TransactionsRepository"/> class.

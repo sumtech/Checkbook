@@ -25,7 +25,7 @@ export class TransactionsService {
     constructor(
         private http: HttpClient,
     ) {
-        let baseApiUrl = 'http://localhost:11111/api/';
+        let baseApiUrl: string = 'http://localhost:11111/api/';
         this.baseApiUrl = baseApiUrl + 'transactions/';
     }
 

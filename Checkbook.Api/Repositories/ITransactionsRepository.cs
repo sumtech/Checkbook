@@ -1,4 +1,6 @@
-﻿namespace Checkbook.Api.Repositories
+﻿// Copyright (c) Palouse Coding Congolmeration. All Rights Reserved.
+
+namespace Checkbook.Api.Repositories
 {
     using System;
     using System.Collections.Generic;

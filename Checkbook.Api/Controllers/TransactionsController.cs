@@ -1,4 +1,6 @@
-﻿namespace Checkbook.Api.Controllers
+﻿// Copyright (c) Palouse Coding Congolmeration. All Rights Reserved.
+
+namespace Checkbook.Api.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -17,7 +19,7 @@
         /// <summary>
         /// The repository for managing transactions.
         /// </summary>
-        private ITransactionsRepository repository;
+        private readonly ITransactionsRepository repository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TransactionsController"/> class.
@@ -27,14 +29,14 @@
         {
             this.repository = repository;
 
-            // We are going to seed the repository if it does not have any data.
-            // This is a crude approach for now while we are getting started.
-            if (!this.repository.GetTransactions().Any())
-            {
-                this.repository.Add(new Transaction { Id = Guid.NewGuid() });
-                this.repository.Add(new Transaction { Id = Guid.NewGuid() });
-                this.repository.Add(new Transaction { Id = Guid.NewGuid() });
-            }
+            ////// We are going to seed the repository if it does not have any data.
+            ////// This is a crude approach for now while we are getting started.
+            ////if (!this.repository.GetTransactions().Any())
+            ////{
+            ////    this.repository.Add(new Transaction { Id = Guid.NewGuid() });
+            ////    this.repository.Add(new Transaction { Id = Guid.NewGuid() });
+            ////    this.repository.Add(new Transaction { Id = Guid.NewGuid() });
+            ////}
         }
 
         /// <summary>
@@ -62,10 +64,12 @@
         /// <summary>
         /// The main page
         /// </summary>
+        /// <param name="id">The unique ID for the transaction.</param>
         /// <returns>The list of transactions.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(List<Transaction>), 200)]
         [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
         public IActionResult Get(Guid id)
         {
             Transaction transaction;
