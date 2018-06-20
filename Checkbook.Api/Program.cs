@@ -1,4 +1,4 @@
-﻿// Copyright (c) Palouse Coding Congolmeration. All Rights Reserved.
+﻿// Copyright (c) Palouse Coding Conglomerate. All Rights Reserved.
 
 namespace Checkbook.Api
 {

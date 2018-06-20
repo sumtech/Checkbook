@@ -1,4 +1,4 @@
-﻿// Copyright (c) Palouse Coding Congolmeration. All Rights Reserved.
+﻿// Copyright (c) Palouse Coding Conglomerate. All Rights Reserved.
 
 /*
  * This file is used by Code Analysis to maintain SuppressMessage attributes that are applied to this project.
