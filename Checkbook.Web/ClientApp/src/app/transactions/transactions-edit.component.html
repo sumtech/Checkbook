@@ -1,0 +1,52 @@
+<div class="container">
+    <h1>Transaction</h1>
+
+    <form *ngIf="transaction" (ngSubmit)="onSubmit()" #transactionForm="ngForm">
+        <!-- ID -->
+        <div class="form-group">
+            <label for="transaction-id">Id</label>
+            <input type="text" class="form-control" id="transaction-id" placeholder="{{transaction.id}}" readonly>
+            <input type="hidden" name="id" [value]="transaction.id" />
+        </div>
+
+        <!-- Date -->
+        <div class="form-group">
+            <label for="transaction-title">Title</label>
+            <input type="text" class="form-control" id="transaction-title" name="title" placeholder="Title" [(ngModel)]="transaction.title" required />
+        </div>
+
+        <!-- From -->
+        <div class="form-group">
+            <label for="transaction-title">From</label>
+            <input type="text" class="form-control" id="transaction-title" name="title" placeholder="Title" [(ngModel)]="transaction.title" required />
+        </div>
+
+        <!-- To -->
+        <div class="form-group">
+            <label for="transaction-title">To</label>
+            <input type="text" class="form-control" id="transaction-title" name="title" placeholder="Title" [(ngModel)]="transaction.title" required />
+        </div>
+
+        <!-- Amount -->
+        <div class="form-group">
+            <label for="transaction-title">Amount</label>
+            <input type="text" class="form-control" id="transaction-title" name="title" placeholder="Title" [(ngModel)]="transaction.title" required />
+        </div>
+
+        <!-- Save -->
+        <div class="form-group">
+            <button type="submit" class="btn btn-default" [disabled]="!transactionForm.form.valid">Save</button>
+        </div>
+
+        <!-- Items -->
+        <div class="form-group">
+            <label for="transaction-artists">Artists</label>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-action"
+                    *ngFor="let artist of transaction.artists">{{artist.name}}</li>
+            </ul>
+            <div class="alert alert-info"
+                 *ngIf="!transaction.artists.length">No artists.</div>
+        </div>
+    </form>
+</div>
