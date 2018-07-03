@@ -32,7 +32,7 @@ namespace Checkbook.Api.Repositories
         /// This is a simplistic method that gets all transactions. In the future, we will be filtering
         /// the transactions so we only get the transactions we are interested in (and allowed to see).
         /// </summary>
-        /// <returns>A list of transactions</returns>
+        /// <returns>A list of transactions.</returns>
         public IEnumerable<Transaction> GetTransactions()
         {
             return this.context.Transactions.AsEnumerable();

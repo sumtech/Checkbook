@@ -40,7 +40,9 @@ namespace Checkbook.Api.Controllers
         }
 
         /// <summary>
-        /// The main page
+        /// Gets the list of all transactions.
+        /// This method is mainly used for testing now. Later we will replace this with a
+        /// version accepting filter/search criteria.
         /// </summary>
         /// <returns>The list of transactions.</returns>
         [HttpGet]
@@ -62,7 +64,7 @@ namespace Checkbook.Api.Controllers
         }
 
         /// <summary>
-        /// The main page
+        /// Gets a specified transaction.
         /// </summary>
         /// <param name="id">The unique ID for the transaction.</param>
         /// <returns>The list of transactions.</returns>
