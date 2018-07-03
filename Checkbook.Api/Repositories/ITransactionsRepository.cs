@@ -31,6 +31,6 @@ namespace Checkbook.Api.Repositories
         /// </summary>
         /// <param name="id">The unique identifier for the transaction.</param>
         /// <returns>The transaction.</returns>
-        Transaction GetTransaction(Guid id);
+        Transaction GetTransaction(long id);
     }
 }

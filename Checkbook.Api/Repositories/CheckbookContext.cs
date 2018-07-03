@@ -2,6 +2,7 @@
 
 namespace Checkbook.Api.Repositories
 {
+    using System;
     using Checkbook.Api.Models;
     using Microsoft.EntityFrameworkCore;
 
@@ -17,11 +18,42 @@ namespace Checkbook.Api.Repositories
         public CheckbookContext(DbContextOptions<CheckbookContext> options)
             : base(options)
         {
+            ////this.Database.EnsureCreated();
         }
 
         /// <summary>
         /// Gets or sets the database set used to manage the transactions.
         /// </summary>
         public virtual DbSet<Transaction> Transactions { get; set; }
+
+        /// <summary>
+        /// Gets or sets the database set used to manage the bank accounts.
+        /// </summary>
+        public virtual DbSet<BankAccount> BankAccount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the database set used to manage the merchants.
+        /// </summary>
+        public virtual DbSet<Merchant> Merchants { get; set; }
+
+        /// <summary>
+        /// Configures the model from the entity types exposed in DbSet properties on the derived context.
+        /// </summary>
+        /// <param name="modelBuilder">The builder being used to construct the model for this context.</param>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            ////base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Transaction>().HasOne(m => m.Merchant)
+                .WithMany().HasForeignKey(m => m.MerchantId);
+
+            modelBuilder.Entity<Transaction>().HasOne(m => m.BankAccount)
+                .WithMany().HasForeignKey(m => m.BankAccountId);
+
+            ////modelBuilder.Entity<Transaction>().HasData(
+            ////    new Transaction { Id = 1 },
+            ////    new Transaction { Id = 2 },
+            ////    new Transaction { Id = 3 });
+        }
     }
 }

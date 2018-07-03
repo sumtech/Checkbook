@@ -2,6 +2,9 @@
 
 namespace Checkbook.Api
 {
+    using System;
+    using System.Collections.Generic;
+    using Checkbook.Api.Models;
     using Checkbook.Api.Repositories;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -59,6 +62,7 @@ namespace Checkbook.Api
             services.AddDbContext<CheckbookContext>(opt => opt.UseInMemoryDatabase("Checkbook"));
 
             services.AddScoped<ITransactionsRepository, TransactionsRepository>();
+            services.AddScoped<IMerchantsRepository, MerchantsRepository>();
         }
 
         /// <summary>
@@ -80,6 +84,91 @@ namespace Checkbook.Api
 
             // Use the framework services.
             app.UseMvc();
+
+            using (IServiceScope serviceScope = app.ApplicationServices.CreateScope())
+            {
+                CheckbookContext context = serviceScope.ServiceProvider.GetService<CheckbookContext>();
+                this.AddTestData(context);
+            }
+        }
+
+        private void AddTestData(CheckbookContext context)
+        {
+            context.Merchants.Add(new Merchant
+            {
+                Id = 1,
+                Name = "Awesome Company",
+            });
+            context.Merchants.Add(new Merchant
+            {
+                Id = 2,
+                Name = "Wonderful Restaurant",
+            });
+            context.Merchants.Add(new Merchant
+            {
+                Id = 3,
+                Name = "Apple and Suasage Factory",
+            });
+
+            context.Transactions.Add(new Transaction
+            {
+                Id = 1,
+                TransactionDate = DateTime.Now.AddDays(-7),
+                Amount = 50.00m,
+                MerchantId = 1,
+                Merchant = new Merchant
+                {
+                    Id = 1,
+                    Name = "Awesome Company",
+                },
+                BankAccountId = 1,
+                BankAccount = new BankAccount
+                {
+                    Id = 1,
+                    Name = "My Account",
+                },
+                TransactionItems = new List<TransactionItem>(),
+            });
+            context.Transactions.Add(new Transaction
+            {
+                Id = 2,
+                TransactionDate = DateTime.Now.AddDays(-5),
+                Amount = 25.00m,
+                MerchantId = 2,
+                Merchant = new Merchant
+                {
+                    Id = 2,
+                    Name = "Wonderful Restaurant",
+                },
+                BankAccountId = 1,
+                BankAccount = new BankAccount
+                {
+                    Id = 1,
+                    Name = "My Account",
+                },
+                TransactionItems = new List<TransactionItem>(),
+            });
+            context.Transactions.Add(new Transaction
+            {
+                Id = 3,
+                TransactionDate = DateTime.Now.AddDays(-2),
+                Amount = 500.00m,
+                MerchantId = 3,
+                Merchant = new Merchant
+                {
+                    Id = 3,
+                    Name = "Apple and Suasage Factory",
+                },
+                BankAccountId = 1,
+                BankAccount = new BankAccount
+                {
+                    Id = 1,
+                    Name = "My Account",
+                },
+                TransactionItems = new List<TransactionItem>(),
+            });
+
+            context.SaveChanges();
         }
     }
 }

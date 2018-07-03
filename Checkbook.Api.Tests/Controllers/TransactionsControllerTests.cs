@@ -207,7 +207,7 @@ namespace Checkbook.Api.Tests.Controllers
             /// <summary>
             /// The ID used as an input.
             /// </summary>
-            private Guid id;
+            private long id;
 
             /// <summary>
             /// The stub repository response.
@@ -228,12 +228,12 @@ namespace Checkbook.Api.Tests.Controllers
                 base.Initialize();
 
                 // Initialize the input(s).
-                this.id = Guid.NewGuid();
+                this.id = 1;
 
                 // Initialize the mock repository method.
                 this.stubTransaction = new Transaction();
                 this.mockTransactionsRepository
-                    .Setup(m => m.GetTransaction(It.IsAny<Guid>()))
+                    .Setup(m => m.GetTransaction(It.IsAny<long>()))
                     .Returns(this.stubTransaction);
 
                 this.stubException = new Exception();
@@ -310,7 +310,7 @@ namespace Checkbook.Api.Tests.Controllers
             {
                 // Arrange.
                 this.mockTransactionsRepository
-                    .Setup(m => m.GetTransaction(It.IsAny<Guid>()))
+                    .Setup(m => m.GetTransaction(It.IsAny<long>()))
                     .Throws(this.stubException);
 
                 // Act.
@@ -331,7 +331,7 @@ namespace Checkbook.Api.Tests.Controllers
             {
                 // Arrange.
                 this.mockTransactionsRepository
-                    .Setup(m => m.GetTransaction(It.IsAny<Guid>()))
+                    .Setup(m => m.GetTransaction(It.IsAny<long>()))
                     .Throws(this.stubException);
 
                 // Act.
@@ -352,7 +352,7 @@ namespace Checkbook.Api.Tests.Controllers
             {
                 // Arrange.
                 this.mockTransactionsRepository
-                    .Setup(m => m.GetTransaction(It.IsAny<Guid>()))
+                    .Setup(m => m.GetTransaction(It.IsAny<long>()))
                     .Throws(this.stubException);
 
                 // Act.

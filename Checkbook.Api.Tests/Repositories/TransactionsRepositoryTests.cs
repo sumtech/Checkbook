@@ -62,11 +62,11 @@ namespace Checkbook.Api.Tests.Repositories
                 {
                     new Transaction
                     {
-                        Id = Guid.NewGuid(),
+                        Id = 1,
                     },
                     new Transaction
                     {
-                        Id = Guid.NewGuid(),
+                        Id = 2,
                     },
                 }.AsQueryable();
 

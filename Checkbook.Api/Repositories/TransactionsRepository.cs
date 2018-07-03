@@ -6,6 +6,7 @@ namespace Checkbook.Api.Repositories
     using System.Collections.Generic;
     using System.Linq;
     using Checkbook.Api.Models;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.ChangeTracking;
 
     /// <summary>
@@ -35,7 +36,10 @@ namespace Checkbook.Api.Repositories
         /// <returns>A list of transactions.</returns>
         public IEnumerable<Transaction> GetTransactions()
         {
-            return this.context.Transactions.AsEnumerable();
+            return this.context.Transactions
+                .Include(t => t.Merchant)
+                .Include(t => t.BankAccount)
+                .AsEnumerable();
         }
 
         /// <summary>
@@ -43,9 +47,12 @@ namespace Checkbook.Api.Repositories
         /// </summary>
         /// <param name="id">The unique identifier for the transaction.</param>
         /// <returns>The transaction.</returns>
-        public Transaction GetTransaction(Guid id)
+        public Transaction GetTransaction(long id)
         {
-            return this.context.Transactions.Find(id);
+            return this.context.Transactions
+                .Include(t => t.Merchant)
+                .Include(t => t.BankAccount)
+                .FirstOrDefault(t => t.Id == id);
         }
 
         /// <summary>

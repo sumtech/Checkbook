@@ -28,15 +28,6 @@ namespace Checkbook.Api.Controllers
         public TransactionsController(ITransactionsRepository repository)
         {
             this.repository = repository;
-
-            ////// We are going to seed the repository if it does not have any data.
-            ////// This is a crude approach for now while we are getting started.
-            ////if (!this.repository.GetTransactions().Any())
-            ////{
-            ////    this.repository.Add(new Transaction { Id = Guid.NewGuid() });
-            ////    this.repository.Add(new Transaction { Id = Guid.NewGuid() });
-            ////    this.repository.Add(new Transaction { Id = Guid.NewGuid() });
-            ////}
         }
 
         /// <summary>
@@ -72,7 +63,7 @@ namespace Checkbook.Api.Controllers
         [ProducesResponseType(typeof(List<Transaction>), 200)]
         [ProducesResponseType(500)]
         [ProducesResponseType(404)]
-        public IActionResult Get(Guid id)
+        public IActionResult Get(long id)
         {
             Transaction transaction;
             try
