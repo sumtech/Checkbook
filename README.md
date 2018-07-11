@@ -9,6 +9,7 @@ The following software needs to be installed:
 * [git](https://git-scm.com/downloads) - for managing the repositories
 * [Node.js](https://nodejs.org/) - for managing packages used by the web application
 * [Visual Studio 2017](https://www.visualstudio.com/vs/community/) - for building the API project
+* [.NET Core](https://www.microsoft.com/net/learn/get-started/windows) - for compiling the project
 
 ### Installing
 
