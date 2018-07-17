@@ -11,26 +11,27 @@
 
         <!-- Date -->
         <div class="form-group">
-            <label for="transaction-title">Title</label>
-            <input type="text" class="form-control" id="transaction-title" name="title" placeholder="Title" [(ngModel)]="transaction.title" required />
+            <label for="transaction-date">Date</label>
+            <input type="text" class="form-control" id="transaction-date" name="date" placeholder="date" required
+                   [(ngModel)]="transaction.transactionDate" />
         </div>
 
         <!-- From -->
-        <div class="form-group">
-            <label for="transaction-title">From</label>
-            <input type="text" class="form-control" id="transaction-title" name="title" placeholder="Title" [(ngModel)]="transaction.title" required />
-        </div>
-
+        <!--<div class="form-group">
+        <label for="transaction-from">From</label>
+        <input type="text" class="form-control" id="transaction-title" name="title" placeholder="Title" required
+               [(ngModel)]="transaction.title" />
+    </div>-->
         <!-- To -->
-        <div class="form-group">
-            <label for="transaction-title">To</label>
-            <input type="text" class="form-control" id="transaction-title" name="title" placeholder="Title" [(ngModel)]="transaction.title" required />
-        </div>
-
+        <!--<div class="form-group">
+        <label for="transaction-title">To</label>
+        <input type="text" class="form-control" id="transaction-title" name="title" placeholder="Title" [(ngModel)]="transaction.title" required />
+    </div>-->
         <!-- Amount -->
         <div class="form-group">
-            <label for="transaction-title">Amount</label>
-            <input type="text" class="form-control" id="transaction-title" name="title" placeholder="Title" [(ngModel)]="transaction.title" required />
+            <label for="transaction-amount">Amount</label>
+            <input type="text" class="form-control" id="transaction-amount" name="amount" placeholder="Amount" required
+                   [(ngModel)]="transaction.amount" />
         </div>
 
         <!-- Save -->
@@ -39,14 +40,14 @@
         </div>
 
         <!-- Items -->
-        <div class="form-group">
-            <label for="transaction-artists">Artists</label>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item list-group-item-action"
-                    *ngFor="let artist of transaction.artists">{{artist.name}}</li>
-            </ul>
-            <div class="alert alert-info"
-                 *ngIf="!transaction.artists.length">No artists.</div>
-        </div>
+        <!--<div class="form-group">
+        <label for="transaction-items">Items</label>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item list-group-item-action"
+                *ngFor="let item of transaction.items">{{item.description}}</li>
+        </ul>
+        <div class="alert alert-info"
+             *ngIf="!transaction.items.length">No items.</div>
+    </div>-->
     </form>
 </div>

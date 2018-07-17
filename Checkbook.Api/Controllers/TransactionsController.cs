@@ -80,5 +80,34 @@ namespace Checkbook.Api.Controllers
 
             return this.Ok(transaction);
         }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(List<Transaction>), 200)]
+        [ProducesResponseType(typeof(string), 500)]
+        [ProducesResponseType(404)]
+        public IActionResult Put(long id, [FromBody] Transaction transaction)
+        {
+            if (transaction == null)
+            {
+                return this.StatusCode(500, "A transaction must be passed in for it to be saved.");
+            }
+
+            if (transaction.Id != id)
+            {
+                return this.StatusCode(500, "The transaction ID values did not match.");
+            }
+
+            Transaction savedTransaction;
+            try
+            {
+                savedTransaction = this.repository.SaveTransaction(transaction);
+            }
+            catch
+            {
+                return this.StatusCode(500, "There was an error saving the transaction.");
+            }
+
+            return this.Ok(transaction);
+        }
     }
 }

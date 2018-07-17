@@ -66,5 +66,17 @@ namespace Checkbook.Api.Repositories
             this.context.SaveChanges();
             return savedTransaction.Entity;
         }
+
+        /// <summary>
+        /// Saves updates to a transaction.
+        /// </summary>
+        /// <param name="transaction">The transaction to be saved.</param>
+        /// <returns>The saved transaction information.</returns>
+        public Transaction SaveTransaction(Transaction transaction)
+        {
+            this.context.Entry(transaction).State = EntityState.Modified;
+            this.context.SaveChanges();
+            return transaction;
+        }
     }
 }

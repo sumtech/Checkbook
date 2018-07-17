@@ -31,5 +31,12 @@ namespace Checkbook.Api.Repositories
         /// <param name="id">The unique identifier for the transaction.</param>
         /// <returns>The transaction.</returns>
         Transaction GetTransaction(long id);
+
+        /// <summary>
+        /// Saves updates for a transaction.
+        /// </summary>
+        /// <param name="transaction">The transaction to be saved.</param>
+        /// <returns>The saved transaction information.</returns>
+        Transaction SaveTransaction(Transaction transaction);
     }
 }
