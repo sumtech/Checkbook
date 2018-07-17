@@ -12,14 +12,14 @@ namespace Checkbook.Api.Tests.Controllers
     using Moq;
 
     /// <summary>
-    /// Tests for the <see cref="TransactionsController"/> class.
+    /// Tests for the <see cref="MerchantsController"/> class.
     /// </summary>
-    public class TransactionsControllerTests
+    public class MerchantsControllerTests
     {
         /// <summary>
-        /// The mock implementation of the transactions repository.
+        /// The mock implementation of the merchants repository.
         /// </summary>
-        private Mock<ITransactionsRepository> mockTransactionsRepository;
+        private Mock<IMerchantsRepository> mockMerchantsRepository;
 
         /// <summary>
         /// Initializes the tests for the class.
@@ -28,19 +28,19 @@ namespace Checkbook.Api.Tests.Controllers
         public virtual void Initialize()
         {
             // Initialize the mock object(s).
-            this.mockTransactionsRepository = new Mock<ITransactionsRepository>();
+            this.mockMerchantsRepository = new Mock<IMerchantsRepository>();
         }
 
         /// <summary>
         /// Tests for the parameterless Get() method.
         /// </summary>
         [TestClass]
-        public class GetMethod : TransactionsControllerTests
+        public class GetMethod : MerchantsControllerTests
         {
             /// <summary>
             /// The stub repository response.
             /// </summary>
-            private List<Transaction> stubTransactions;
+            private List<Merchant> stubMerchants;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -51,10 +51,10 @@ namespace Checkbook.Api.Tests.Controllers
                 base.Initialize();
 
                 // Initialize the mock repository method.
-                this.stubTransactions = new List<Transaction>();
-                this.mockTransactionsRepository
-                    .Setup(m => m.GetTransactions())
-                    .Returns(this.stubTransactions);
+                this.stubMerchants = new List<Merchant>();
+                this.mockMerchantsRepository
+                    .Setup(m => m.GetMerchants())
+                    .Returns(this.stubMerchants);
             }
 
             /// <summary>
@@ -64,23 +64,23 @@ namespace Checkbook.Api.Tests.Controllers
             public void ReturnsRepositoryResult()
             {
                 // Arrange.
-                Mock<ITransactionsRepository> mockTransactionsRepository = new Mock<ITransactionsRepository>();
-                mockTransactionsRepository
-                    .Setup(x => x.GetTransactions())
-                    .Returns(this.stubTransactions);
+                Mock<IMerchantsRepository> mockMerchantsRepository = new Mock<IMerchantsRepository>();
+                mockMerchantsRepository
+                    .Setup(x => x.GetMerchants())
+                    .Returns(this.stubMerchants);
 
                 // Act.
-                TransactionsController controller = new TransactionsController(mockTransactionsRepository.Object);
+                MerchantsController controller = new MerchantsController(mockMerchantsRepository.Object);
                 IActionResult result = controller.Get();
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                mockTransactionsRepository.Verify(m => m.GetTransactions(), Times.Once, "The transactions should have been requested from the repository.");
-                mockTransactionsRepository.VerifyNoOtherCalls();
+                mockMerchantsRepository.Verify(m => m.GetMerchants(), Times.Once, "The merchants should have been requested from the repository.");
+                mockMerchantsRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
-                Assert.AreEqual(this.stubTransactions, okResult.Value, "The result from the repository should have been returned.");
+                Assert.AreEqual(this.stubMerchants, okResult.Value, "The result from the repository should have been returned.");
             }
 
             /// <summary>
@@ -90,19 +90,19 @@ namespace Checkbook.Api.Tests.Controllers
             public void HandlesGeneralException()
             {
                 // Arrange.
-                this.mockTransactionsRepository
-                    .Setup(m => m.GetTransactions())
+                this.mockMerchantsRepository
+                    .Setup(m => m.GetMerchants())
                     .Throws(new Exception());
 
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                MerchantsController controller = new MerchantsController(this.mockMerchantsRepository.Object);
                 IActionResult result = controller.Get();
                 ObjectResult objectResult = result as ObjectResult;
 
                 // Assert.
                 Assert.IsNotNull(objectResult, "An object result should have been returned.");
                 Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
-                string expectedMessage = "There was an error getting the transactions.";
+                string expectedMessage = "There was an error getting the merchants.";
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
             }
         }
@@ -111,7 +111,7 @@ namespace Checkbook.Api.Tests.Controllers
         /// Tests for the Get() method that takes in an ID value.
         /// </summary>
         [TestClass]
-        public class GetMethod_Id : TransactionsControllerTests
+        public class GetMethod_Id : MerchantsControllerTests
         {
             /// <summary>
             /// The ID used as an input.
@@ -121,7 +121,7 @@ namespace Checkbook.Api.Tests.Controllers
             /// <summary>
             /// The stub repository response.
             /// </summary>
-            private Transaction stubTransaction;
+            private Merchant stubMerchant;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -135,10 +135,10 @@ namespace Checkbook.Api.Tests.Controllers
                 this.id = 7;
 
                 // Initialize the mock repository method.
-                this.stubTransaction = new Transaction();
-                this.mockTransactionsRepository
-                    .Setup(m => m.GetTransaction(It.IsAny<long>()))
-                    .Returns(this.stubTransaction);
+                this.stubMerchant = new Merchant();
+                this.mockMerchantsRepository
+                    .Setup(m => m.GetMerchant(It.IsAny<long>()))
+                    .Returns(this.stubMerchant);
             }
 
             /// <summary>
@@ -148,17 +148,17 @@ namespace Checkbook.Api.Tests.Controllers
             public void ReturnsRepositoryResult()
             {
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                MerchantsController controller = new MerchantsController(this.mockMerchantsRepository.Object);
                 IActionResult result = controller.Get(id);
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                mockTransactionsRepository.Verify(m => m.GetTransaction(this.id), Times.Once, "The transactions should have been requested from the repository.");
-                mockTransactionsRepository.VerifyNoOtherCalls();
+                mockMerchantsRepository.Verify(m => m.GetMerchant(this.id), Times.Once, "The merchants should have been requested from the repository.");
+                mockMerchantsRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
-                Assert.AreEqual(this.stubTransaction, okResult.Value, "The result from the repository should have been returned.");
+                Assert.AreEqual(this.stubMerchant, okResult.Value, "The result from the repository should have been returned.");
             }
 
             /// <summary>
@@ -168,12 +168,12 @@ namespace Checkbook.Api.Tests.Controllers
             public void HandlesNotFound()
             {
                 // Arrange.
-                this.mockTransactionsRepository
-                    .Setup(m => m.GetTransaction(It.IsAny<long>()))
-                    .Returns<Transaction>(null);
+                this.mockMerchantsRepository
+                    .Setup(m => m.GetMerchant(It.IsAny<long>()))
+                    .Returns<Merchant>(null);
 
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                MerchantsController controller = new MerchantsController(this.mockMerchantsRepository.Object);
                 IActionResult result = controller.Get(id);
                 NotFoundResult notFoundResult = result as NotFoundResult;
 
@@ -189,19 +189,19 @@ namespace Checkbook.Api.Tests.Controllers
             public void HandlesGeneralException()
             {
                 // Arrange.
-                this.mockTransactionsRepository
-                    .Setup(m => m.GetTransaction(It.IsAny<long>()))
+                this.mockMerchantsRepository
+                    .Setup(m => m.GetMerchant(It.IsAny<long>()))
                     .Throws(new Exception());
 
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                MerchantsController controller = new MerchantsController(this.mockMerchantsRepository.Object);
                 IActionResult result = controller.Get(id);
                 ObjectResult objectResult = result as ObjectResult;
 
                 // Assert.
                 Assert.IsNotNull(objectResult, "An object result should have been returned.");
                 Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
-                string expectedMessage = "There was an error getting the transaction.";
+                string expectedMessage = "There was an error getting the merchant.";
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
             }
         }

@@ -2,9 +2,7 @@
 
 namespace Checkbook.Api.Controllers
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Checkbook.Api.Models;
     using Checkbook.Api.Repositories;
     using Microsoft.AspNetCore.Mvc;
@@ -38,7 +36,7 @@ namespace Checkbook.Api.Controllers
         /// <returns>The list of merchants.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(List<Merchant>), 200)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(string), 500)]
         public IActionResult Get()
         {
             IEnumerable<Merchant> merchants;
@@ -61,7 +59,7 @@ namespace Checkbook.Api.Controllers
         /// <returns>The list of merchants.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(List<Merchant>), 200)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(string), 500)]
         [ProducesResponseType(404)]
         public IActionResult Get(long id)
         {

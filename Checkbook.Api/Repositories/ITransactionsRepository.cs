@@ -2,7 +2,6 @@
 
 namespace Checkbook.Api.Repositories
 {
-    using System;
     using System.Collections.Generic;
     using Checkbook.Api.Models;
 

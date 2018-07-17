@@ -5,6 +5,7 @@ namespace Checkbook.Api.Tests.Repositories
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using Checkbook.Api.Models;
     using Checkbook.Api.Repositories;
     using Microsoft.EntityFrameworkCore;
@@ -42,7 +43,7 @@ namespace Checkbook.Api.Tests.Repositories
             /// <summary>
             /// Mock data for the database set.
             /// </summary>
-            private IQueryable<Transaction> entities;
+            private List<Transaction> entities;
 
             /// <summary>
             /// Mock implementation of the database set.
@@ -68,13 +69,15 @@ namespace Checkbook.Api.Tests.Repositories
                     {
                         Id = 2,
                     },
-                }.AsQueryable();
+                };
+
+                IQueryable<Transaction> queryableEntities = this.entities.AsQueryable();
 
                 this.mockDbSet = new Mock<DbSet<Transaction>>();
-                mockDbSet.As<IQueryable<Transaction>>().Setup(m => m.Provider).Returns(entities.Provider);
-                mockDbSet.As<IQueryable<Transaction>>().Setup(m => m.Expression).Returns(entities.Expression);
-                mockDbSet.As<IQueryable<Transaction>>().Setup(m => m.ElementType).Returns(entities.ElementType);
-                mockDbSet.As<IQueryable<Transaction>>().Setup(m => m.GetEnumerator()).Returns(entities.GetEnumerator());
+                this.mockDbSet.As<IQueryable<Transaction>>().Setup(m => m.Provider).Returns(queryableEntities.Provider);
+                this.mockDbSet.As<IQueryable<Transaction>>().Setup(m => m.Expression).Returns(queryableEntities.Expression);
+                this.mockDbSet.As<IQueryable<Transaction>>().Setup(m => m.ElementType).Returns(queryableEntities.ElementType);
+                this.mockDbSet.As<IQueryable<Transaction>>().Setup(m => m.GetEnumerator()).Returns(queryableEntities.GetEnumerator());
 
                 // Initialize the repository response.
                 this.mockDbContext
@@ -83,24 +86,7 @@ namespace Checkbook.Api.Tests.Repositories
             }
 
             /// <summary>
-            /// Verifies.
-            /// </summary>
-            [TestMethod]
-            public void GetsTransactionsFromContext()
-            {
-                // Assert.
-                TransactionsRepository repository = new TransactionsRepository(this.mockDbContext.Object);
-                repository.GetTransactions();
-
-                // Act.
-                this.mockDbContext.Verify(m => m.Transactions, Times.Once);
-                ////this.mockDbContext.VerifyNoOtherCalls();
-                this.mockDbSet.Verify(m => m.AsQueryable(), Times.Once);
-                ////this.mockDbSet.VerifyNoOtherCalls();
-            }
-
-            /// <summary>
-            /// Verifies.
+            /// Verifies the entiies from the context are returned.
             /// </summary>
             [TestMethod]
             public void ReturnsTransactionsFromContext()
@@ -109,18 +95,45 @@ namespace Checkbook.Api.Tests.Repositories
                 TransactionsRepository repository = new TransactionsRepository(this.mockDbContext.Object);
                 IEnumerable<Transaction> actual = repository.GetTransactions();
 
-                Assert.AreEqual(2, actual.Count());
+                // Act.
+                this.mockDbContext.Verify(m => m.Transactions, Times.Once);
+                ////this.mockDbSet.Verify(m => m.Include(t => t.Merchant), Times.Once, "The merchant should have been included.");
+                ////this.mockDbSet.Verify(m => m.Include(t => t.BankAccount), Times.Once, "The bank account should have been included.");
+                ////this.mockDbSet.Verify(m => m.AsEnumerable(), Times.Once);
+                ////this.mockDbContext.VerifyNoOtherCalls();
+                ////this.mockDbSet.VerifyNoOtherCalls();
 
-                var a = this.entities;
-                var b = this.entities.AsEnumerable();
-                var c = this.entities.AsEnumerable().First();
+                Assert.AreEqual(this.entities.Count(), actual.Count(), "The entity entity count should have matched.");
 
-                var d = actual.First();
-
-                Assert.AreEqual(this.entities.AsEnumerable().First(), actual.First());
+                List<Transaction> actualList = actual.ToList();
+                Assert.AreEqual(this.entities[0], actualList[0], "The first entities should have been the same.");
+                Assert.AreEqual(this.entities[1], actualList[1], "The second entities should have been the same.");
                 ////Assert.AreEqual(this.entities.ElementAt(0).Id, actual.ElementAt(0).Id);
                 ////Assert.AreEqual(this.entities.ElementAt(1).Id, actual.ElementAt(1).Id);
             }
+
+            /////// <summary>
+            /////// Verifies.
+            /////// </summary>
+            ////[TestMethod]
+            ////public void ReturnsTransactionsFromContext()
+            ////{
+            ////    // Assert.
+            ////    TransactionsRepository repository = new TransactionsRepository(this.mockDbContext.Object);
+            ////    IEnumerable<Transaction> actual = repository.GetTransactions();
+
+            ////    Assert.AreEqual(2, actual.Count());
+
+            ////    var a = this.entities;
+            ////    var b = this.entities.AsEnumerable();
+            ////    var c = this.entities.AsEnumerable().First();
+
+            ////    var d = actual.First();
+
+            ////    Assert.AreEqual(this.entities.AsEnumerable().First(), actual.First());
+            ////    ////Assert.AreEqual(this.entities.ElementAt(0).Id, actual.ElementAt(0).Id);
+            ////    ////Assert.AreEqual(this.entities.ElementAt(1).Id, actual.ElementAt(1).Id);
+            ////}
 
             /// <summary>
             /// Verifies.

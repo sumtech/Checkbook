@@ -18,7 +18,6 @@ namespace Checkbook.Api.Repositories
         public CheckbookContext(DbContextOptions<CheckbookContext> options)
             : base(options)
         {
-            ////this.Database.EnsureCreated();
         }
 
         /// <summary>
@@ -42,18 +41,13 @@ namespace Checkbook.Api.Repositories
         /// <param name="modelBuilder">The builder being used to construct the model for this context.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            ////base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Transaction>().HasOne(m => m.Merchant)
                 .WithMany().HasForeignKey(m => m.MerchantId);
 
             modelBuilder.Entity<Transaction>().HasOne(m => m.BankAccount)
                 .WithMany().HasForeignKey(m => m.BankAccountId);
-
-            ////modelBuilder.Entity<Transaction>().HasData(
-            ////    new Transaction { Id = 1 },
-            ////    new Transaction { Id = 2 },
-            ////    new Transaction { Id = 3 });
         }
     }
 }
