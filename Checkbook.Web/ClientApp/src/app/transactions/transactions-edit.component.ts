@@ -34,7 +34,10 @@ export class TransactionsEditComponent implements OnInit {
     ngOnInit(): void {
         const id: string = this.route.snapshot.paramMap.get('id');
         this.service.getTransaction(id)
-            .subscribe(transaction => this.transaction = transaction);
+            .subscribe((transaction) => {
+                transaction.transactionDate = new Date(transaction.transactionDate);
+                this.transaction = transaction;
+            });
     }
 
     /**
