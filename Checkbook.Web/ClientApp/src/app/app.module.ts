@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
+import { NgbModule, NgbDateAdapter, NgbDateNativeAdapter } from '@ng-bootstrap/ng-bootstrap';
+
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
@@ -20,12 +22,13 @@ import { TransactionsService } from './transactions/transactions.service';
 
         TransactionsListComponent,
         TransactionsEditComponent
-        
+
     ],
     imports: [
         BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
         HttpClientModule,
         FormsModule,
+        NgbModule,
         RouterModule.forRoot([
             {
                 path: '',
@@ -51,6 +54,7 @@ import { TransactionsService } from './transactions/transactions.service';
         ])
     ],
     providers: [
+        { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter },
         TransactionsService
     ],
     bootstrap: [AppComponent]
