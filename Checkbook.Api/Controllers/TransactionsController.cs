@@ -81,6 +81,12 @@ namespace Checkbook.Api.Controllers
             return this.Ok(transaction);
         }
 
+        /// <summary>
+        /// Updates a transaction.
+        /// </summary>
+        /// <param name="id">The unique ID for the transaction.</param>
+        /// <param name="transaction">The transaction information.</param>
+        /// <returns>The updated transaction.</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(List<Transaction>), 200)]
         [ProducesResponseType(typeof(string), 500)]
