@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatButtonModule, MatCheckboxModule, MatDatepickerModule, MatNativeDateModule  } from '@angular/material';
+import { MatButtonModule, MatCheckboxModule, MatDatepickerModule, MatNativeDateModule, MatInputModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -23,7 +23,6 @@ import { TransactionsService } from './transactions/transactions.service';
 
         TransactionsListComponent,
         TransactionsEditComponent
-
     ],
     imports: [
         BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -31,8 +30,11 @@ import { TransactionsService } from './transactions/transactions.service';
         FormsModule,
 
         BrowserAnimationsModule,
+        MatButtonModule,
+        MatCheckboxModule,
         MatDatepickerModule,
         MatNativeDateModule,
+        MatInputModule,
 
         RouterModule.forRoot([
             {

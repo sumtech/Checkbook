@@ -1,34 +1,43 @@
 <div class="container">
     <h1>Transaction</h1>
 
-    <form *ngIf="transaction" (ngSubmit)="onSubmit()" #transactionForm="ngForm">
+    <form class="standard-form"
+          *ngIf="transaction"
+          (ngSubmit)="onSubmit()"
+          #transactionForm="ngForm">
+
         <!-- ID -->
-        <div class="form-group">
-            <label for="transaction-id">Id</label>
-            <input type="text" class="form-control" id="transaction-id" placeholder="{{transaction.id}}" readonly>
-            <input type="hidden" name="id" [value]="transaction.id" />
-        </div>
+        <mat-form-field>
+            <input type="text" [value]="transaction.id" placeholder="Id" readonly
+                   matInput>
+            <input type="hidden" id="transaction-id" name="id" [value]="transaction.id" />
+        </mat-form-field>
 
         <!-- Date -->
-        <div class="form-group">
-            <input type="text" class="form-control" id="transaction-date" name="transaction-date" placeholder="date" required
-                   [(ngModel)]="transaction.transactionDate"
-                   [matDatepicker]="myDatepicker">
-            <mat-datepicker-toggle [for]="myDatepicker"></mat-datepicker-toggle>
-            <mat-datepicker #myDatepicker></mat-datepicker>
-        </div>
+        <mat-form-field>
+            <input type="text" id="transaction-date" name="transaction-date" placeholder="Date" required
+                   matInput
+                   [matDatepicker]="transactionDatePicker"
+                   [(ngModel)]="transaction.transactionDate">
+            <mat-datepicker-toggle [for]="transactionDatePicker"
+                                   matSuffix></mat-datepicker-toggle>
+            <mat-datepicker #transactionDatePicker></mat-datepicker>
+        </mat-form-field>
 
         <!-- Amount -->
-        <div class="form-group">
-            <label for="transaction-amount">Amount</label>
-            <input type="text" class="form-control" id="transaction-amount" name="amount" placeholder="Amount" required
+        <mat-form-field>
+            <input type="text" id="transaction-amount" name="amount" placeholder="Amount" required
+                   matInput
                    [(ngModel)]="transaction.amount" />
-        </div>
+        </mat-form-field>
 
         <!-- Save -->
-        <div class="form-group">
-            <button type="submit" class="btn btn-default" [disabled]="!transactionForm.form.valid">Save</button>
-        </div>
+        <button type="submit"
+                mat-button
+                color="primary"
+                [disabled]="!transactionForm.form.valid">
+            Save
+        </button>
 
         <!-- Items -->
         <!--<div class="form-group">
