@@ -28,7 +28,7 @@ namespace Checkbook.Api.Repositories
         /// <summary>
         /// Gets or sets the database set used to manage the bank accounts.
         /// </summary>
-        public virtual DbSet<BankAccount> BankAccount { get; set; }
+        public virtual DbSet<BankAccount> BankAccounts { get; set; }
 
         /// <summary>
         /// Gets or sets the database set used to manage the merchants.

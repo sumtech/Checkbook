@@ -56,7 +56,7 @@ namespace Checkbook.Api.Controllers
         /// Gets a specified merchant.
         /// </summary>
         /// <param name="id">The unique ID for the merchant.</param>
-        /// <returns>The list of merchants.</returns>
+        /// <returns>The merchant.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(List<Merchant>), 200)]
         [ProducesResponseType(typeof(string), 500)]

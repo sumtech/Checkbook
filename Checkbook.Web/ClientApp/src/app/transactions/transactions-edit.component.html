@@ -1,4 +1,14 @@
 <div class="container">
+    <!-- Cancel -->
+    <a style="float:right;"
+       [routerLink]="['/transactions']"
+       *ngIf="transaction"
+       mat-button
+       color="primary">
+        Cancel
+    </a>
+
+    <!-- Heading -->
     <h1>Transaction</h1>
 
     <form class="standard-form"
@@ -24,13 +34,60 @@
             <mat-datepicker #transactionDatePicker></mat-datepicker>
         </mat-form-field>
 
+        <!-- Bank Account -->
+        <mat-form-field>
+            <mat-select id="bank-account-id" name="bank-account-id" placeholder="Bank Account" required
+                        [(ngModel)]="transaction.bankAccountId">
+                <mat-option *ngFor="let bankAccount of bankAccounts" [value]="bankAccount.id">{{bankAccount.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Merchant -->
+        <mat-form-field>
+            <mat-select id="merchant-id" name="merchant-id" placeholder="Merchant" required
+                        [(ngModel)]="transaction.merchantId">
+                <mat-option *ngFor="let merchant of merchants" [value]="merchant.id">{{merchant.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Category -->
+        <!--<mat-form-field>
+            <mat-select id="category-id" name="category-id" placeholder="Category" required
+                        [(ngModel)]="transaction.categoryId">
+                <mat-option *ngFor="let category of categories" [value]="category.id">{{category.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>-->
+        <!-- Subcategory -->
+        <!--<mat-form-field>
+            <mat-select id="subcategory-id" name="subcategory-id" placeholder="Subcategory" required
+                        [(ngModel)]="transaction.subcategoryId">
+                <mat-option *ngFor="let subcategory of subcategories" [value]="subcategory.id">{{subcategory.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>-->
+        <!-- Payment Method -->
+        <!--<mat-form-field>
+            <mat-select id="payment-method-id" name="payment-method-id" placeholder="Payment Method" required
+                        [(ngModel)]="transaction.paymentMethodId">
+                <mat-option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod.id">{{paymentMethod.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>-->
         <!-- Amount -->
         <mat-form-field>
-            <input type="text" id="transaction-amount" name="amount" placeholder="Amount" required
+            <input type="number" id="transaction-amount" name="amount" placeholder="Amount" required
                    matInput
                    [(ngModel)]="transaction.amount" />
         </mat-form-field>
 
+        <!-- Notes -->
+        <mat-form-field>
+            <textarea id="transaction-notes" name="notes" placeholder="Notes"
+                      matInput
+                      [(ngModel)]="transaction.notes"></textarea>
+        </mat-form-field>
+        <!-- Is Processed -->
+        <mat-checkbox id="is-processed" name="is-processed"
+                      color="primary"
+                      [(ngModel)]="transaction.isProcessed">Is Processed</mat-checkbox>
         <!-- Save -->
         <button type="submit"
                 mat-button

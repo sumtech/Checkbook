@@ -46,6 +46,17 @@ namespace Checkbook.Api.Models
         public virtual BankAccount BankAccount { get; set; }
 
         /// <summary>
+        /// Gets or sets more information about the transaction.
+        /// </summary>
+        public string Notes { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the transaction has been
+        /// processed by the bank account.
+        /// </summary>
+        public bool IsProcessed { get; set; }
+
+        /// <summary>
         /// Gets or sets the collection of items for this transaction.
         /// </summary>
         public virtual List<TransactionItem> TransactionItems { get; set; }

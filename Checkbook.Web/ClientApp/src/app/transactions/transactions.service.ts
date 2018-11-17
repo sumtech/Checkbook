@@ -33,27 +33,27 @@ export class TransactionsService {
      * Get the list of transactions which are available.
      * @returns             An observable list of transactions.
      */
-    public getTransactions(): Observable<Transaction[]> {
+    public getAll(): Observable<Transaction[]> {
         let url: string = this.baseApiUrl;
         return this.http.get<Transaction[]>(url);
     }
 
     /**
-     * Get a specified transactions.
-     * @param id            The unique ID for the transactions.
-     * @returns             An observable transactions.
+     * Get a specified transaction.
+     * @param id            The unique ID for the transaction.
+     * @returns             An observable transaction.
      */
-    public getTransaction(id: string): Observable<Transaction> {
+    public get(id: string): Observable<Transaction> {
         let url: string = this.baseApiUrl + encodeURIComponent(id) + '/';
         return this.http.get<Transaction>(url);
     }
 
     /**
      * Save a transaction record.
-     * @param transaction   The transactions information.
-     * @returns             An observable transactions.
+     * @param transaction   The transaction information.
+     * @returns             An observable transaction.
      */
-    public saveTransaction(transaction: Transaction): Observable<Transaction> {
+    public save(transaction: Transaction): Observable<Transaction> {
         let url: string = this.baseApiUrl;
         if (transaction.id) {
             url += encodeURIComponent(transaction.id) + '/';

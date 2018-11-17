@@ -61,8 +61,9 @@ namespace Checkbook.Api
             // Register application services.
             services.AddDbContext<CheckbookContext>(opt => opt.UseInMemoryDatabase("Checkbook"));
 
-            services.AddScoped<ITransactionsRepository, TransactionsRepository>();
+            services.AddScoped<IBankAccountsRepository, BankAccountsRepository>();
             services.AddScoped<IMerchantsRepository, MerchantsRepository>();
+            services.AddScoped<ITransactionsRepository, TransactionsRepository>();
         }
 
         /// <summary>
