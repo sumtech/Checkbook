@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="C:\SumTech\Websites\Checkbook\Checkbook.Api\Checkbook.Api.csproj" />
+    <ProjectReference Include="..\Checkbook.Api\Checkbook.Api.csproj" />
   </ItemGroup>
 
 </Project>
