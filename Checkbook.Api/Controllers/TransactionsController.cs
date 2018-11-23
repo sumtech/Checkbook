@@ -3,6 +3,7 @@
 namespace Checkbook.Api.Controllers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Checkbook.Api.Models;
     using Checkbook.Api.Repositories;
     using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,6 @@ namespace Checkbook.Api.Controllers
     /// The API controller for managing transactions.
     /// </summary>
     [Produces("application/json")]
-    [Route("api/[controller]")]
     public class TransactionsController : ControllerBase
     {
         /// <summary>
@@ -34,7 +34,7 @@ namespace Checkbook.Api.Controllers
         /// version accepting filter/search criteria.
         /// </summary>
         /// <returns>The list of transactions.</returns>
-        [HttpGet]
+        [HttpGet("api/transactions")]
         [ProducesResponseType(typeof(List<Transaction>), 200)]
         [ProducesResponseType(typeof(string), 500)]
         public IActionResult Get()
@@ -49,6 +49,11 @@ namespace Checkbook.Api.Controllers
                 return this.StatusCode(500, "There was an error getting the transactions.");
             }
 
+            if (transactions == null)
+            {
+                return this.Ok(new List<Transaction>());
+            }
+
             return this.Ok(transactions);
         }
 
@@ -57,7 +62,7 @@ namespace Checkbook.Api.Controllers
         /// </summary>
         /// <param name="id">The unique ID for the transaction.</param>
         /// <returns>The list of transactions.</returns>
-        [HttpGet("{id}")]
+        [HttpGet("api/transactions/{id:long}")]
         [ProducesResponseType(typeof(List<Transaction>), 200)]
         [ProducesResponseType(typeof(string), 500)]
         [ProducesResponseType(404)]
@@ -87,7 +92,7 @@ namespace Checkbook.Api.Controllers
         /// <param name="id">The unique ID for the transaction.</param>
         /// <param name="transaction">The transaction information.</param>
         /// <returns>The updated transaction.</returns>
-        [HttpPut("{id}")]
+        [HttpPut("api/transactions/{id:long}")]
         [ProducesResponseType(typeof(List<Transaction>), 200)]
         [ProducesResponseType(typeof(string), 500)]
         [ProducesResponseType(404)]

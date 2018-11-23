@@ -2,7 +2,6 @@
 
 namespace Checkbook.Api.Repositories
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Checkbook.Api.Models;
@@ -37,8 +36,12 @@ namespace Checkbook.Api.Repositories
         public IEnumerable<Transaction> GetTransactions()
         {
             return this.context.Transactions
-                .Include(t => t.Merchant)
-                .Include(t => t.BankAccount)
+                .Include(t => t.FromAccount)
+                .Include(t => t.ToAccount)
+                .Include(t => t.Items)
+                .ThenInclude(i => i.Budget)
+                .ThenInclude(b => b.Subcategory)
+                .ThenInclude(s => s.Category)
                 .AsEnumerable();
         }
 
@@ -50,8 +53,12 @@ namespace Checkbook.Api.Repositories
         public Transaction GetTransaction(long id)
         {
             return this.context.Transactions
-                .Include(t => t.Merchant)
-                .Include(t => t.BankAccount)
+                .Include(t => t.FromAccount)
+                .Include(t => t.ToAccount)
+                .Include(t => t.Items)
+                .ThenInclude(i => i.Budget)
+                .ThenInclude(b => b.Subcategory)
+                .ThenInclude(s => s.Category)
                 .FirstOrDefault(t => t.Id == id);
         }
 

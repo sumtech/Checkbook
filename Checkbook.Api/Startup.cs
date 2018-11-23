@@ -11,6 +11,7 @@ namespace Checkbook.Api
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// The startup configuration methods.
@@ -56,13 +57,14 @@ namespace Checkbook.Api
             }));
 
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(opts => opts.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
+                .AddJsonOptions(opts => opts.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore);
 
             // Register application services.
             services.AddDbContext<CheckbookContext>(opt => opt.UseInMemoryDatabase("Checkbook"));
 
-            services.AddScoped<IBankAccountsRepository, BankAccountsRepository>();
-            services.AddScoped<IMerchantsRepository, MerchantsRepository>();
+            services.AddScoped<IAccountsRepository, AccountsRepository>();
             services.AddScoped<ITransactionsRepository, TransactionsRepository>();
         }
 
@@ -93,81 +95,294 @@ namespace Checkbook.Api
             }
         }
 
+        /// <summary>
+        /// Adds test data to a context.
+        /// </summary>
+        /// <param name="context">The context to which data will be added.</param>
         private void AddTestData(CheckbookContext context)
         {
-            context.Merchants.Add(new Merchant
+            // Users
+            User user1 = new User
             {
                 Id = 1,
-                Name = "Awesome Company",
-            });
-            context.Merchants.Add(new Merchant
+                Username = "Dude",
+                FirstName = "Brian",
+                LastName = "Dorgan",
+            };
+
+            context.Users.Add(user1);
+
+            // Accounts
+            Account bankAccount1 = new Account
+            {
+                Id = 1,
+                Name = "My Account",
+                IsUserAccount = true,
+                UserId = user1.Id,
+            };
+
+            context.Accounts.Add(bankAccount1);
+
+            Account merchantAccount1 = new Account
             {
                 Id = 2,
-                Name = "Wonderful Restaurant",
-            });
-            context.Merchants.Add(new Merchant
+                Name = "Awesome Company",
+                IsUserAccount = false,
+            };
+            Account merchantAccount2 = new Account
             {
                 Id = 3,
+                Name = "Wonderful Restaurant",
+                IsUserAccount = false,
+            };
+            Account merchantAccount3 = new Account
+            {
+                Id = 4,
                 Name = "Apple and Suasage Factory",
-            });
+                IsUserAccount = false,
+            };
 
-            context.Transactions.Add(new Transaction
+            context.Accounts.Add(merchantAccount1);
+            context.Accounts.Add(merchantAccount2);
+            context.Accounts.Add(merchantAccount3);
+
+            // Categories
+            Category categoryFood = new Category
+            {
+                Id = 1,
+                UserId = user1.Id,
+                Name = "Food",
+            };
+            Subcategory subcategoryGroceries = new Subcategory
+            {
+                Id = 1,
+                CategoryId = categoryFood.Id,
+                Name = "Groceries",
+            };
+            Subcategory subcategoryRestaurants = new Subcategory
+            {
+                Id = 2,
+                CategoryId = categoryFood.Id,
+                Name = "Restaurants",
+            };
+
+            Category categoryEntertainment = new Category
+            {
+                Id = 2,
+                UserId = user1.Id,
+                Name = "Entertainment",
+            };
+            Subcategory subcategoryDates = new Subcategory
+            {
+                Id = 3,
+                CategoryId = categoryEntertainment.Id,
+                Name = "Dates",
+            };
+            Subcategory subcategoryVacations = new Subcategory
+            {
+                Id = 4,
+                CategoryId = categoryEntertainment.Id,
+                Name = "Vacations",
+            };
+
+            Category categoryTransportation = new Category
+            {
+                Id = 3,
+                UserId = user1.Id,
+                Name = "Transportation",
+            };
+            Subcategory subcategoryGasoline = new Subcategory
+            {
+                Id = 5,
+                CategoryId = categoryTransportation.Id,
+                Name = "Car Insurance",
+            };
+            Subcategory subcategoryCarInsurance = new Subcategory
+            {
+                Id = 6,
+                CategoryId = categoryTransportation.Id,
+                Name = "Car Insurance",
+            };
+            Subcategory subcategoryOilChanges = new Subcategory
+            {
+                Id = 7,
+                CategoryId = categoryTransportation.Id,
+                Name = "Oil Changes",
+            };
+            Subcategory subcategoryNewCar = new Subcategory
+            {
+                Id = 8,
+                CategoryId = categoryTransportation.Id,
+                Name = "New Car",
+            };
+
+            context.Categories.Add(categoryFood);
+            context.Subcategories.Add(subcategoryGroceries);
+            context.Subcategories.Add(subcategoryRestaurants);
+
+            context.Categories.Add(categoryEntertainment);
+            context.Subcategories.Add(subcategoryDates);
+            context.Subcategories.Add(subcategoryVacations);
+
+            context.Categories.Add(categoryTransportation);
+            context.Subcategories.Add(subcategoryGasoline);
+            context.Subcategories.Add(subcategoryCarInsurance);
+            context.Subcategories.Add(subcategoryOilChanges);
+            context.Subcategories.Add(subcategoryNewCar);
+
+            // Budgets.
+            Budget budgetGroceries = new Budget
+            {
+                Id = 1,
+                UserId = user1.Id,
+                Name = "Groceries",
+                SubcategoryId = subcategoryGroceries.Id,
+            };
+            Budget budgetPeaches = new Budget
+            {
+                Id = 2,
+                UserId = user1.Id,
+                Name = "Peaches",
+                SubcategoryId = subcategoryGroceries.Id,
+            };
+            Budget budgetRestaruants = new Budget
+            {
+                Id = 3,
+                UserId = user1.Id,
+                Name = "Restaurants",
+                SubcategoryId = subcategoryRestaurants.Id,
+            };
+            Budget budgetDates = new Budget
+            {
+                Id = 4,
+                UserId = user1.Id,
+                Name = "Dates",
+                SubcategoryId = subcategoryDates.Id,
+            };
+            Budget budgetVacations = new Budget
+            {
+                Id = 5,
+                UserId = user1.Id,
+                Name = "Vacations",
+                SubcategoryId = subcategoryVacations.Id,
+            };
+            Budget budgetGasoline = new Budget
+            {
+                Id = 6,
+                UserId = user1.Id,
+                Name = "Gasoline",
+                SubcategoryId = subcategoryGasoline.Id,
+            };
+            Budget budgetCarInsurance = new Budget
+            {
+                Id = 7,
+                UserId = user1.Id,
+                Name = "Car Insurance",
+                SubcategoryId = subcategoryCarInsurance.Id,
+            };
+            Budget budgetOilChanges = new Budget
+            {
+                Id = 8,
+                UserId = user1.Id,
+                Name = "Oil Changes",
+                SubcategoryId = subcategoryOilChanges.Id,
+            };
+            Budget budgetHawaii = new Budget
+            {
+                Id = 9,
+                UserId = user1.Id,
+                Name = "Hawaii",
+                SubcategoryId = subcategoryVacations.Id,
+            };
+            Budget budgetNewCar = new Budget
+            {
+                Id = 10,
+                UserId = user1.Id,
+                Name = "New Car",
+                SubcategoryId = subcategoryNewCar.Id,
+            };
+
+            context.Budgets.Add(budgetGroceries);
+            context.Budgets.Add(budgetPeaches);
+            context.Budgets.Add(budgetRestaruants);
+            context.Budgets.Add(budgetDates);
+            context.Budgets.Add(budgetVacations);
+            context.Budgets.Add(budgetGasoline);
+            context.Budgets.Add(budgetCarInsurance);
+            context.Budgets.Add(budgetOilChanges);
+            context.Budgets.Add(budgetHawaii);
+            context.Budgets.Add(budgetNewCar);
+
+            // Transactions
+            Transaction transaction1 = new Transaction
             {
                 Id = 1,
                 TransactionDate = DateTime.Now.AddDays(-7),
-                Amount = 50.00m,
-                MerchantId = 1,
-                Merchant = new Merchant
+                FromAccountId = bankAccount1.Id,
+                ToAccountId = merchantAccount1.Id,
+                Items = new List<TransactionItem>
                 {
-                    Id = 1,
-                    Name = "Awesome Company",
+                    new TransactionItem
+                    {
+                        Id = 1,
+                        TransactionId = 1,
+                        BudgetId = budgetOilChanges.Id,
+                        Amount = 50.00m,
+                    },
                 },
-                BankAccountId = 1,
-                BankAccount = new BankAccount
-                {
-                    Id = 1,
-                    Name = "My Account",
-                },
-                TransactionItems = new List<TransactionItem>(),
-            });
-            context.Transactions.Add(new Transaction
+            };
+            Transaction transaction2 = new Transaction
             {
                 Id = 2,
                 TransactionDate = DateTime.Now.AddDays(-5),
-                Amount = 25.00m,
-                MerchantId = 2,
-                Merchant = new Merchant
+                FromAccountId = bankAccount1.Id,
+                ToAccountId = merchantAccount2.Id,
+                Items = new List<TransactionItem>
                 {
-                    Id = 2,
-                    Name = "Wonderful Restaurant",
+                    new TransactionItem
+                    {
+                        Id = 2,
+                        TransactionId = 2,
+                        BudgetId = budgetGroceries.Id,
+                        Amount = 25.00m,
+                    },
                 },
-                BankAccountId = 1,
-                BankAccount = new BankAccount
-                {
-                    Id = 1,
-                    Name = "My Account",
-                },
-                TransactionItems = new List<TransactionItem>(),
-            });
-            context.Transactions.Add(new Transaction
+            };
+            Transaction transaction3 = new Transaction
             {
                 Id = 3,
                 TransactionDate = DateTime.Now.AddDays(-2),
-                Amount = 500.00m,
-                MerchantId = 3,
-                Merchant = new Merchant
+                FromAccountId = bankAccount1.Id,
+                ToAccountId = merchantAccount3.Id,
+                Items = new List<TransactionItem>
                 {
-                    Id = 3,
-                    Name = "Apple and Suasage Factory",
+                    new TransactionItem
+                    {
+                        Id = 3,
+                        TransactionId = 3,
+                        BudgetId = budgetDates.Id,
+                        Amount = 100.00m,
+                    },
+                    new TransactionItem
+                    {
+                        Id = 4,
+                        TransactionId = budgetRestaruants.Id,
+                        BudgetId = 2,
+                        Amount = 200.00m,
+                    },
+                    new TransactionItem
+                    {
+                        Id = 5,
+                        TransactionId = 3,
+                        BudgetId = budgetHawaii.Id,
+                        Amount = 300.00m,
+                    },
                 },
-                BankAccountId = 1,
-                BankAccount = new BankAccount
-                {
-                    Id = 1,
-                    Name = "My Account",
-                },
-                TransactionItems = new List<TransactionItem>(),
-            });
+            };
+
+            context.Transactions.Add(transaction1);
+            context.Transactions.Add(transaction2);
+            context.Transactions.Add(transaction3);
 
             context.SaveChanges();
         }
