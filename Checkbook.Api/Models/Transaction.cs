@@ -4,9 +4,12 @@ namespace Checkbook.Api.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Represents a transaction between a merchant and a bank account.
+    /// The transaction items will contain the amount and budget allocations.
+    /// The budgets will belong to specified categories.
     /// </summary>
     public class Transaction
     {
@@ -18,36 +21,56 @@ namespace Checkbook.Api.Models
         /// <summary>
         /// Gets or sets the date for the transaction.
         /// </summary>
-        public DateTime TransactionDate { get; set; }
+        public DateTime Date { get; set; }
 
         /// <summary>
-        /// Gets or sets the amount transferred for the transaction.
+        /// Gets or sets the unique ID for the account from which money is
+        /// getting transferred.
         /// </summary>
-        public decimal Amount { get; set; }
+        public long FromAccountId { get; set; }
 
         /// <summary>
-        /// Gets or sets the unique ID for the merchant.
+        /// Gets or sets the account from which money is getting transferred.
         /// </summary>
-        public long MerchantId { get; set; }
+        public Account FromAccount { get; set; }
 
         /// <summary>
-        /// Gets or sets the merchant.
+        /// Gets or sets the unique ID for the account to which money is
+        /// getting transferred.
         /// </summary>
-        public virtual Merchant Merchant { get; set; }
+        public long ToAccountId { get; set; }
 
         /// <summary>
-        /// Gets or sets the unique ID for the bank account.
+        /// Gets or sets the account to which money is getting transferred.
         /// </summary>
-        public long BankAccountId { get; set; }
-
-        /// <summary>
-        /// Gets or sets a bank account.
-        /// </summary>
-        public virtual BankAccount BankAccount { get; set; }
+        public Account ToAccount { get; set; }
 
         /// <summary>
         /// Gets or sets the collection of items for this transaction.
         /// </summary>
-        public virtual List<TransactionItem> TransactionItems { get; set; }
+        public virtual List<TransactionItem> Items { get; set; }
+
+        /// <summary>
+        /// Gets the total amount for this transaction, which is the sum of the
+        /// amounts for each item.
+        /// </summary>
+        public decimal Amount
+        {
+            get
+            {
+                return this.Items.Sum(i => i.Amount);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets more information about the transaction.
+        /// </summary>
+        public string Notes { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the transaction has been
+        /// processed by the bank account.
+        /// </summary>
+        public bool IsProcessed { get; set; }
     }
 }

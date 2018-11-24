@@ -26,14 +26,29 @@ namespace Checkbook.Api.Repositories
         public virtual DbSet<Transaction> Transactions { get; set; }
 
         /// <summary>
-        /// Gets or sets the database set used to manage the bank accounts.
+        /// Gets or sets the database set used to manage the accounts.
         /// </summary>
-        public virtual DbSet<BankAccount> BankAccount { get; set; }
+        public virtual DbSet<Account> Accounts { get; set; }
 
         /// <summary>
-        /// Gets or sets the database set used to manage the merchants.
+        /// Gets or sets the database set used to manage budgets.
         /// </summary>
-        public virtual DbSet<Merchant> Merchants { get; set; }
+        public virtual DbSet<Budget> Budgets { get; set; }
+
+        /// <summary>
+        /// Gets or sets the database set used to manage categories.
+        /// </summary>
+        public virtual DbSet<Category> Categories { get; set; }
+
+        /// <summary>
+        /// Gets or sets the database set used to manage subcategories.
+        /// </summary>
+        public virtual DbSet<Subcategory> Subcategories { get; set; }
+
+        /// <summary>
+        /// Gets or sets the database set used to manage budgets.
+        /// </summary>
+        public virtual DbSet<User> Users { get; set; }
 
         /// <summary>
         /// Configures the model from the entity types exposed in DbSet properties on the derived context.
@@ -43,11 +58,11 @@ namespace Checkbook.Api.Repositories
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Transaction>().HasOne(m => m.Merchant)
-                .WithMany().HasForeignKey(m => m.MerchantId);
+            modelBuilder.Entity<Transaction>().HasOne(m => m.FromAccount)
+                .WithMany().HasForeignKey(m => m.FromAccountId);
 
-            modelBuilder.Entity<Transaction>().HasOne(m => m.BankAccount)
-                .WithMany().HasForeignKey(m => m.BankAccountId);
+            modelBuilder.Entity<Transaction>().HasOne(m => m.ToAccount)
+                .WithMany().HasForeignKey(m => m.ToAccountId);
         }
     }
 }

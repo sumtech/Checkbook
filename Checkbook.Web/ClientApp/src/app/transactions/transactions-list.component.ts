@@ -16,17 +16,17 @@ export class TransactionsListComponent implements OnInit {
     /**
      * The constructor.
      * @constructor
-     * @param service
+     * @param transactionsService
      */
     constructor(
-        private service: TransactionsService
+        private transactionsService: TransactionsService
     ) { }
 
     /**
      * Handle initialization fo the component.
      */
     ngOnInit(): void {
-        this.service.getTransactions()
+        this.transactionsService.getAll()
             .subscribe(transactions => this.transactions = transactions);
     }
 }
