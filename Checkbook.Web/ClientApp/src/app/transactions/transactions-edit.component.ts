@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { Transaction } from './transactions.model';
+import { Transaction, TransactionItem } from './transactions.model';
 import { TransactionsService } from './transactions.service';
 
-import { BankAccount } from '../bank-accounts/bank-accounts.model';
-import { BankAccountsService } from '../bank-accounts/bank-accounts.service';
+import { BankAccount, MerchantAccount } from '../accounts/accounts.model';
+import { AccountsService } from '../accounts/accounts.service';
 
-import { Merchant } from '../merchants/merchants.model';
-import { MerchantsService } from '../merchants/merchants.service';
+import { Budget } from '../budgets/budgets.model';
+import { BudgetsService } from '../budgets/budgets.service';
 
 @Component({
     selector: 'app-transactions-edit',
@@ -29,7 +29,12 @@ export class TransactionsEditComponent implements OnInit {
     /**
      * The list of available merchants.
      */
-    public merchants: Merchant[];
+    public merchantAccounts: MerchantAccount[];
+
+    /**
+     * the list of available budgets.
+     */
+    public budgets: Budget[];
 
     /**
      * Constructor.
@@ -41,8 +46,8 @@ export class TransactionsEditComponent implements OnInit {
      * @param transactionsService
      */
     constructor(
-        private bankAccountsService: BankAccountsService,
-        private merchantsService: MerchantsService,
+        private accountsService: AccountsService,
+        private budgetsService: BudgetsService,
         private route: ActivatedRoute,
         private router: Router,
         private transactionsService: TransactionsService
@@ -55,19 +60,35 @@ export class TransactionsEditComponent implements OnInit {
         const id: string = this.route.snapshot.paramMap.get('id');
         this.transactionsService.get(id)
             .subscribe((transaction) => {
-                transaction.transactionDate = new Date(transaction.transactionDate);
+                transaction.date = new Date(transaction.date);
                 this.transaction = transaction;
             });
 
-        this.bankAccountsService.getAll()
+        this.accountsService.getBankAccounts()
             .subscribe((bankAccounts) => {
                 this.bankAccounts = bankAccounts;
             });
 
-        this.merchantsService.getAll()
-            .subscribe((merchants) => {
-                this.merchants = merchants;
+        this.accountsService.getMerchantAccounts()
+            .subscribe((merchantAccounts) => {
+                this.merchantAccounts = merchantAccounts;
             });
+
+        this.budgetsService.getAll()
+            .subscribe((budgets) => {
+                this.budgets = budgets;
+            });
+    }
+
+    /**
+     * Remove item from the transaction.
+     * @param item                  The item to remove.
+     */
+    remove(item: TransactionItem) {
+        let index: number = this.transaction.items.indexOf(item);
+        this.transaction.items.splice(index, 1);
+
+        ////delete this.transaction.items[index];
     }
 
     /**

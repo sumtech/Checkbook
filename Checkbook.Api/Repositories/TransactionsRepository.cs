@@ -40,7 +40,6 @@ namespace Checkbook.Api.Repositories
                 .Include(t => t.ToAccount)
                 .Include(t => t.Items)
                 .ThenInclude(i => i.Budget)
-                .ThenInclude(b => b.Subcategory)
                 .ThenInclude(s => s.Category)
                 .AsEnumerable();
         }
@@ -57,7 +56,6 @@ namespace Checkbook.Api.Repositories
                 .Include(t => t.ToAccount)
                 .Include(t => t.Items)
                 .ThenInclude(i => i.Budget)
-                .ThenInclude(b => b.Subcategory)
                 .ThenInclude(s => s.Category)
                 .FirstOrDefault(t => t.Id == id);
         }
@@ -82,6 +80,30 @@ namespace Checkbook.Api.Repositories
         public Transaction SaveTransaction(Transaction transaction)
         {
             this.context.Entry(transaction).State = EntityState.Modified;
+            foreach (TransactionItem item in transaction.Items)
+            {
+                if (item.Id != 0)
+                {
+                    this.context.Entry(item).State = EntityState.Modified;
+                }
+                else
+                {
+                    this.context.Entry(item).State = EntityState.Added;
+                }
+            }
+
+            // Delete items that were not passed back.
+            List<long> savedItemIds = transaction.Items.Select(x => x.Id).ToList();
+            Transaction dbTransaction = this.context.Transactions.AsNoTracking()
+                .Include(t => t.Items)
+                .FirstOrDefault(t => t.Id == transaction.Id);
+            IEnumerable<TransactionItem> itemsToRemove = dbTransaction.Items
+                .Where(i => !savedItemIds.Contains(i.Id));
+            foreach (TransactionItem item in itemsToRemove)
+            {
+                this.context.Entry(item).State = EntityState.Deleted;
+            }
+
             this.context.SaveChanges();
             return transaction;
         }

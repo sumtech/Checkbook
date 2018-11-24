@@ -4,13 +4,14 @@
         <button type="button" class="btn btn-primary">Transfer</button>
         <button type="button" class="btn btn-primary">Deposit/Refund</button>
     </div>
+
     <h1>Transactions</h1>
 
     <div class="row">
         <div class="col-1"><strong>ID</strong></div>
         <div class="col-2"><strong>Date</strong></div>
-        <div class="col-3"><strong>Account</strong></div>
-        <div class="col-3"><strong>Merchant</strong></div>
+        <div class="col-3"><strong>From</strong></div>
+        <div class="col-3"><strong>To</strong></div>
         <div class="col-3"><strong>Amount</strong></div>
     </div>
     <div class="row bg-light rounded mt-1" *ngFor="let transaction of transactions">
@@ -18,13 +19,13 @@
             <a [routerLink]="['/transactions/edit/' + transaction.id]">{{transaction.id}}</a>
         </div>
         <div class="col-2">
-            <a [routerLink]="['/transactions/edit/' + transaction.id]">{{transaction.transactionDate | date:'shortDate'}}</a>
+            <a [routerLink]="['/transactions/edit/' + transaction.id]">{{transaction.date | date:'shortDate'}}</a>
         </div>
         <div class="col-3">
-            <a [routerLink]="['/transactions/edit/' + transaction.id]">{{transaction.bankAccount.name}}</a>
+            <a [routerLink]="['/transactions/edit/' + transaction.id]">{{transaction.fromAccount.name}}</a>
         </div>
         <div class="col-3">
-            <a [routerLink]="['/transactions/edit/' + transaction.id]">{{transaction.merchant.name}}</a>
+            <a [routerLink]="['/transactions/edit/' + transaction.id]">{{transaction.toAccount.name}}</a>
         </div>
         <div class="col-2">
             <a [routerLink]="['/transactions/edit/' + transaction.id]">{{transaction.amount | currency:'USD'}}</a>

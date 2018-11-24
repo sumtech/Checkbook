@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Palouse Coding Conglomerate. All Rights Reserved.
 
-using System.ComponentModel;
-using Newtonsoft.Json;
-
 namespace Checkbook.Api.Models
 {
+    using System.ComponentModel;
+    using Newtonsoft.Json;
+
     /// <summary>
     /// Represents an item within a transaction associated with a particular
     /// item or group of items associated with the same budget.

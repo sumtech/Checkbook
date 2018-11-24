@@ -29,8 +29,6 @@ namespace Checkbook.Api.Controllers
 
         /// <summary>
         /// Gets the list of all bank accounts.
-        /// This method is mainly used for testing now. Later we will replace this with a
-        /// version accepting filter/search criteria.
         /// </summary>
         /// <returns>The list of bank accounts.</returns>
         [HttpGet("api/accounts/my-accounts")]
@@ -55,8 +53,6 @@ namespace Checkbook.Api.Controllers
 
         /// <summary>
         /// Gets the list of all merchant accounts.
-        /// This method is mainly used for testing now. Later we will replace this with a
-        /// version accepting filter/search criteria.
         /// </summary>
         /// <returns>The list of merchant accounts.</returns>
         [HttpGet("api/accounts/merchants")]

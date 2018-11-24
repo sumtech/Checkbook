@@ -65,6 +65,7 @@ namespace Checkbook.Api
             services.AddDbContext<CheckbookContext>(opt => opt.UseInMemoryDatabase("Checkbook"));
 
             services.AddScoped<IAccountsRepository, AccountsRepository>();
+            services.AddScoped<IBudgetsRepository, BudgetsRepository>();
             services.AddScoped<ITransactionsRepository, TransactionsRepository>();
         }
 
@@ -153,82 +154,22 @@ namespace Checkbook.Api
                 UserId = user1.Id,
                 Name = "Food",
             };
-            Subcategory subcategoryGroceries = new Subcategory
-            {
-                Id = 1,
-                CategoryId = categoryFood.Id,
-                Name = "Groceries",
-            };
-            Subcategory subcategoryRestaurants = new Subcategory
-            {
-                Id = 2,
-                CategoryId = categoryFood.Id,
-                Name = "Restaurants",
-            };
-
             Category categoryEntertainment = new Category
             {
                 Id = 2,
                 UserId = user1.Id,
                 Name = "Entertainment",
             };
-            Subcategory subcategoryDates = new Subcategory
-            {
-                Id = 3,
-                CategoryId = categoryEntertainment.Id,
-                Name = "Dates",
-            };
-            Subcategory subcategoryVacations = new Subcategory
-            {
-                Id = 4,
-                CategoryId = categoryEntertainment.Id,
-                Name = "Vacations",
-            };
-
             Category categoryTransportation = new Category
             {
                 Id = 3,
                 UserId = user1.Id,
                 Name = "Transportation",
             };
-            Subcategory subcategoryGasoline = new Subcategory
-            {
-                Id = 5,
-                CategoryId = categoryTransportation.Id,
-                Name = "Car Insurance",
-            };
-            Subcategory subcategoryCarInsurance = new Subcategory
-            {
-                Id = 6,
-                CategoryId = categoryTransportation.Id,
-                Name = "Car Insurance",
-            };
-            Subcategory subcategoryOilChanges = new Subcategory
-            {
-                Id = 7,
-                CategoryId = categoryTransportation.Id,
-                Name = "Oil Changes",
-            };
-            Subcategory subcategoryNewCar = new Subcategory
-            {
-                Id = 8,
-                CategoryId = categoryTransportation.Id,
-                Name = "New Car",
-            };
 
             context.Categories.Add(categoryFood);
-            context.Subcategories.Add(subcategoryGroceries);
-            context.Subcategories.Add(subcategoryRestaurants);
-
             context.Categories.Add(categoryEntertainment);
-            context.Subcategories.Add(subcategoryDates);
-            context.Subcategories.Add(subcategoryVacations);
-
             context.Categories.Add(categoryTransportation);
-            context.Subcategories.Add(subcategoryGasoline);
-            context.Subcategories.Add(subcategoryCarInsurance);
-            context.Subcategories.Add(subcategoryOilChanges);
-            context.Subcategories.Add(subcategoryNewCar);
 
             // Budgets.
             Budget budgetGroceries = new Budget
@@ -236,70 +177,70 @@ namespace Checkbook.Api
                 Id = 1,
                 UserId = user1.Id,
                 Name = "Groceries",
-                SubcategoryId = subcategoryGroceries.Id,
+                CategoryId = categoryFood.Id,
             };
             Budget budgetPeaches = new Budget
             {
                 Id = 2,
                 UserId = user1.Id,
                 Name = "Peaches",
-                SubcategoryId = subcategoryGroceries.Id,
+                CategoryId = categoryFood.Id,
             };
             Budget budgetRestaruants = new Budget
             {
                 Id = 3,
                 UserId = user1.Id,
                 Name = "Restaurants",
-                SubcategoryId = subcategoryRestaurants.Id,
+                CategoryId = categoryFood.Id,
             };
             Budget budgetDates = new Budget
             {
                 Id = 4,
                 UserId = user1.Id,
                 Name = "Dates",
-                SubcategoryId = subcategoryDates.Id,
+                CategoryId = categoryEntertainment.Id,
             };
             Budget budgetVacations = new Budget
             {
                 Id = 5,
                 UserId = user1.Id,
                 Name = "Vacations",
-                SubcategoryId = subcategoryVacations.Id,
+                CategoryId = categoryEntertainment.Id,
             };
             Budget budgetGasoline = new Budget
             {
                 Id = 6,
                 UserId = user1.Id,
                 Name = "Gasoline",
-                SubcategoryId = subcategoryGasoline.Id,
+                CategoryId = categoryTransportation.Id,
             };
             Budget budgetCarInsurance = new Budget
             {
                 Id = 7,
                 UserId = user1.Id,
                 Name = "Car Insurance",
-                SubcategoryId = subcategoryCarInsurance.Id,
+                CategoryId = categoryTransportation.Id,
             };
             Budget budgetOilChanges = new Budget
             {
                 Id = 8,
                 UserId = user1.Id,
                 Name = "Oil Changes",
-                SubcategoryId = subcategoryOilChanges.Id,
+                CategoryId = categoryTransportation.Id,
             };
             Budget budgetHawaii = new Budget
             {
                 Id = 9,
                 UserId = user1.Id,
                 Name = "Hawaii",
-                SubcategoryId = subcategoryVacations.Id,
+                CategoryId = categoryEntertainment.Id,
             };
             Budget budgetNewCar = new Budget
             {
                 Id = 10,
                 UserId = user1.Id,
                 Name = "New Car",
-                SubcategoryId = subcategoryNewCar.Id,
+                CategoryId = categoryTransportation.Id,
             };
 
             context.Budgets.Add(budgetGroceries);
@@ -317,7 +258,7 @@ namespace Checkbook.Api
             Transaction transaction1 = new Transaction
             {
                 Id = 1,
-                TransactionDate = DateTime.Now.AddDays(-7),
+                Date = DateTime.Now.AddDays(-7),
                 FromAccountId = bankAccount1.Id,
                 ToAccountId = merchantAccount1.Id,
                 Items = new List<TransactionItem>
@@ -334,7 +275,7 @@ namespace Checkbook.Api
             Transaction transaction2 = new Transaction
             {
                 Id = 2,
-                TransactionDate = DateTime.Now.AddDays(-5),
+                Date = DateTime.Now.AddDays(-5),
                 FromAccountId = bankAccount1.Id,
                 ToAccountId = merchantAccount2.Id,
                 Items = new List<TransactionItem>
@@ -351,7 +292,7 @@ namespace Checkbook.Api
             Transaction transaction3 = new Transaction
             {
                 Id = 3,
-                TransactionDate = DateTime.Now.AddDays(-2),
+                Date = DateTime.Now.AddDays(-2),
                 FromAccountId = bankAccount1.Id,
                 ToAccountId = merchantAccount3.Id,
                 Items = new List<TransactionItem>

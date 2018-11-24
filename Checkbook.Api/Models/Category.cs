@@ -20,10 +20,9 @@ namespace Checkbook.Api.Models
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of subcategories that belong to this
-        /// category.
+        /// Gets or sets the list of budgets that belong to this category.
         /// </summary>
-        public List<Subcategory> Subcategories { get; set; }
+        public List<Budget> Budgets { get; set; }
 
         /// <summary>
         /// Gets or sets the unique identifier for the user to which this

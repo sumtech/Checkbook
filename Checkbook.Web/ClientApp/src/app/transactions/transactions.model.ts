@@ -1,5 +1,5 @@
-import { BankAccount } from '../bank-accounts/bank-accounts.model';
-import { Merchant } from '../merchants/merchants.model';
+import { Account } from '../accounts/accounts.model';
+import { Budget } from '../budgets/budgets.model';
 
 /**
  * Represents a transaction.
@@ -14,7 +14,32 @@ export class Transaction {
     /**
      * The date for the transaction.
      */
-    transactionDate: Date;
+    date: Date;
+
+    /**
+     * The unique identifier for the "from" account.
+     */
+    fromAccountId: number;
+
+    /**
+     * The "from" account.
+     */
+    fromAccount: Account;
+
+    /**
+     * The unique identifier for the "from" account.
+     */
+    toAccountId: number;
+
+    /**
+     * The "to" account.
+     */
+    toAccount: Account;
+
+    /**
+     * The collection of items for this transaction.
+     */
+    items: TransactionItem[];
 
     /**
      * The amount transferred for the transaction.
@@ -22,19 +47,15 @@ export class Transaction {
     amount: number;
 
     /**
-     * The merchant.
+     * Information about this transaction.
      */
-    merchant: Merchant;
+    notes: string;
 
     /**
-     * The bank account.
+     * Indicates whether this transaction has been processed by the bank
+     * account.
      */
-    bankAccount: BankAccount;
-
-    /**
-     * The collection of items for this transaction.
-     */
-    transactionItems: TransactionItem[];
+    isProcessed: boolean;
 }
 
 /**
@@ -45,4 +66,19 @@ export class TransactionItem {
      * The unique identifier for the transaction item.
      */
     id: string;
+
+    /**
+     * The budget from which the funds are being taken.
+     */
+    budget: Budget;
+
+    /**
+     * The description for the transaction item.
+     */
+    description: string;
+
+    /**
+     * The amount for the item.
+     */
+    amount: number;
 }

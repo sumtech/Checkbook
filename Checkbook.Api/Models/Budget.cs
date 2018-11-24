@@ -19,15 +19,15 @@ namespace Checkbook.Api.Models
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the uniqe identifier for the subcategory to which this
+        /// Gets or sets the unique identifier for the category to which this
         /// budget is associated.
         /// </summary>
-        public long SubcategoryId { get; set; }
+        public long CategoryId { get; set; }
 
         /// <summary>
-        /// Gets or sets the subcategory to which this budget is associated.
+        /// Gets or sets the category to which this budget is associated.
         /// </summary>
-        public Subcategory Subcategory { get; set; }
+        public Category Category { get; set; }
 
         /// <summary>
         /// Gets or sets the unique identifier for the user to which this

@@ -13,11 +13,12 @@ import { HomeComponent } from './home/home.component';
 
 ////import { BankAccountsListComponent } from './bank-accounts/bank-accounts-list.component';
 ////import { BankAccountsEditComponent } from './bank-accounts/bank-accounts-edit.component';
-import { BankAccountsService } from './bank-accounts/bank-accounts.service';
+import { AccountsService } from './accounts/accounts.service';
+
+import { BudgetsService } from './budgets/budgets.service';
 
 ////import { MerchantsListComponent } from './merchants/merchants-list.component';
 ////import { MerchantsEditComponent } from './merchants/merchants-edit.component';
-import { MerchantsService } from './merchants/merchants.service';
 
 import { TransactionsListComponent } from './transactions/transactions-list.component';
 import { TransactionsEditComponent } from './transactions/transactions-edit.component';
@@ -71,8 +72,8 @@ import { TransactionsService } from './transactions/transactions.service';
         ])
     ],
     providers: [
-        BankAccountsService,
-        MerchantsService,
+        AccountsService,
+        BudgetsService,
         TransactionsService
     ],
     bootstrap: [AppComponent]
