@@ -63,20 +63,14 @@ namespace Checkbook.Api.Tests.Controllers
             [TestMethod]
             public void ReturnsRepositoryResult()
             {
-                // Arrange.
-                Mock<ITransactionsRepository> mockTransactionsRepository = new Mock<ITransactionsRepository>();
-                mockTransactionsRepository
-                    .Setup(x => x.GetTransactions())
-                    .Returns(this.stubTransactions);
-
                 // Act.
-                TransactionsController controller = new TransactionsController(mockTransactionsRepository.Object);
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
                 IActionResult result = controller.Get();
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                mockTransactionsRepository.Verify(m => m.GetTransactions(), Times.Once, "The transactions should have been requested from the repository.");
-                mockTransactionsRepository.VerifyNoOtherCalls();
+                this.mockTransactionsRepository.Verify(m => m.GetTransactions(), Times.Once, "The transactions should have been requested from the repository.");
+                this.mockTransactionsRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
