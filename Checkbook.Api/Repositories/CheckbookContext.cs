@@ -41,11 +41,6 @@ namespace Checkbook.Api.Repositories
         public virtual DbSet<Category> Categories { get; set; }
 
         /// <summary>
-        /// Gets or sets the database set used to manage subcategories.
-        /// </summary>
-        public virtual DbSet<Subcategory> Subcategories { get; set; }
-
-        /// <summary>
         /// Gets or sets the database set used to manage budgets.
         /// </summary>
         public virtual DbSet<User> Users { get; set; }
