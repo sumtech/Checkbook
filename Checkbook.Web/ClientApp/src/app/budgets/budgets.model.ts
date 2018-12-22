@@ -6,7 +6,7 @@ export class Budget {
     /**
      * The unique identifier for the budget.
      */
-    id: string;
+    id: number;
 
     /**
      * The name of the budget.
