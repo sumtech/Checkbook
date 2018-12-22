@@ -56,7 +56,7 @@ export class TransactionsService {
     public save(transaction: Transaction): Observable<Transaction> {
         let url: string = this.baseApiUrl;
         if (transaction.id) {
-            url += encodeURIComponent(transaction.id) + '/';
+            url += transaction.id + '/';
             return this.http.put<Transaction>(url, transaction);
         } else {
             return this.http.post<Transaction>(url, transaction);

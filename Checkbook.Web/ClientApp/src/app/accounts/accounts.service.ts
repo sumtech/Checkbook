@@ -65,7 +65,7 @@ export class AccountsService {
     public save(account: Account): Observable<Account> {
         let url: string = this.baseApiUrl;
         if (account.id) {
-            url += encodeURIComponent(account.id) + '/';
+            url += account.id + '/';
             return this.http.put<Account>(url, account);
         } else {
             return this.http.post<Account>(url, account);
