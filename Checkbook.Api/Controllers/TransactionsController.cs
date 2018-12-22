@@ -91,12 +91,44 @@ namespace Checkbook.Api.Controllers
         }
 
         /// <summary>
+        /// Adds a transaction.
+        /// </summary>
+        /// <param name="transaction">The transaction information.</param>
+        /// <returns>The saved transaction.</returns>
+        [HttpPost("api/transactions")]
+        [ProducesResponseType(typeof(List<Transaction>), 200)]
+        [ProducesResponseType(typeof(string), 500)]
+        [ProducesResponseType(404)]
+        public IActionResult Post([FromBody] Transaction transaction)
+        {
+            long userId = 1;
+
+            if (transaction == null)
+            {
+                return this.BadRequest("A transaction must be passed in for it to be saved.");
+            }
+
+            Transaction savedTransaction;
+            try
+            {
+                savedTransaction = this.repository.Add(transaction, userId);
+            }
+            catch (System.Exception ex)
+            {
+                return this.StatusCode(500, ex.Message);
+                return this.StatusCode(500, "There was an error saving the transaction.");
+            }
+
+            return this.Ok(savedTransaction);
+        }
+
+        /// <summary>
         /// Updates a transaction.
         /// </summary>
         /// <param name="transactionId">The unique ID for the transaction.</param>
         /// <param name="transaction">The transaction information.</param>
         /// <returns>The updated transaction.</returns>
-        [HttpPut("api/transactions/{id:long}")]
+        [HttpPut("api/transactions/{transactionId:long}")]
         [ProducesResponseType(typeof(List<Transaction>), 200)]
         [ProducesResponseType(typeof(string), 500)]
         [ProducesResponseType(404)]

@@ -789,7 +789,7 @@ namespace Checkbook.Api.Tests.Repositories
             /// Verifies items get added to the context.
             /// </summary>
             [TestMethod]
-            public void AddsTransactionItemsToTheContext()
+            public void AddsTransactionItemToTheContext()
             {
                 // Arrange.
                 this.transaction.Items.Add(new TransactionItem
@@ -830,6 +830,64 @@ namespace Checkbook.Api.Tests.Repositories
                     Assert.AreEqual(expected.Items.ElementAt(2).Amount, actual.Items.ElementAt(2).Amount, "The amount for the third item should match.");
                     Assert.IsNotNull(actual.Items.ElementAt(2).Budget, "The budget for the third item of the transaction should be present.");
                     Assert.AreEqual(expected.Items.ElementAt(2).BudgetId, actual.Items.ElementAt(2).Budget.Id, "The ID for the budget for the third item of the transaction should match.");
+                }
+            }
+
+            /// <summary>
+            /// Verifies items get added to the context.
+            /// </summary>
+            [TestMethod]
+            public void AddsTransactionItemsToTheContext()
+            {
+                // Arrange.
+                this.transaction.Items.Add(new TransactionItem
+                {
+                    BudgetId = 1,
+                    Amount = 300,
+                });
+                this.transaction.Items.Add(new TransactionItem
+                {
+                    BudgetId = 1,
+                    Amount = 400,
+                });
+
+                // Act.
+                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                {
+                    TransactionsRepository repository = new TransactionsRepository(context);
+                    repository.Save(this.transaction, this.userId);
+                }
+
+                // Assert.
+                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                {
+                    Transaction actual = ContextDataService.GetTransactionsSet(context)
+                        .FirstOrDefault(x => x.Id == this.transaction.Id);
+                    Assert.IsNotNull(actual, "A transaction should be found.");
+
+                    Transaction expected = this.transaction;
+                    Assert.IsNotNull(actual.Items, "The items for the entity should be returned.");
+                    Assert.AreEqual(4, actual.Items.Count(), "The number of items should be increased by 2.");
+
+                    Assert.AreEqual(expected.Items.ElementAt(0).Id, actual.Items.ElementAt(0).Id, "The ID for the first item should match.");
+                    Assert.AreEqual(expected.Items.ElementAt(0).Amount, actual.Items.ElementAt(0).Amount, "The amount for the first item should match.");
+                    Assert.IsNotNull(actual.Items.ElementAt(0).Budget, "The budget for the first item of the transaction should be present.");
+                    Assert.AreEqual(expected.Items.ElementAt(0).BudgetId, actual.Items.ElementAt(0).Budget.Id, "The ID for the budget for the first item of the transaction should match.");
+
+                    Assert.AreEqual(expected.Items.ElementAt(1).Id, actual.Items.ElementAt(1).Id, "The ID for the second item should match.");
+                    Assert.AreEqual(expected.Items.ElementAt(1).Amount, actual.Items.ElementAt(1).Amount, "The amount for the second item should match.");
+                    Assert.IsNotNull(actual.Items.ElementAt(1).Budget, "The budget for the second item of the transaction should be present.");
+                    Assert.AreEqual(expected.Items.ElementAt(1).BudgetId, actual.Items.ElementAt(1).Budget.Id, "The ID for the budget for the second item of the transaction should match.");
+
+                    Assert.AreEqual(expected.Items.ElementAt(2).Id, actual.Items.ElementAt(2).Id, "The ID for the third item should match.");
+                    Assert.AreEqual(expected.Items.ElementAt(2).Amount, actual.Items.ElementAt(2).Amount, "The amount for the third item should match.");
+                    Assert.IsNotNull(actual.Items.ElementAt(2).Budget, "The budget for the third item of the transaction should be present.");
+                    Assert.AreEqual(expected.Items.ElementAt(2).BudgetId, actual.Items.ElementAt(2).Budget.Id, "The ID for the budget for the third item of the transaction should match.");
+
+                    Assert.AreEqual(expected.Items.ElementAt(3).Id, actual.Items.ElementAt(3).Id, "The ID for the fourth item should match.");
+                    Assert.AreEqual(expected.Items.ElementAt(3).Amount, actual.Items.ElementAt(3).Amount, "The amount for the fourth item should match.");
+                    Assert.IsNotNull(actual.Items.ElementAt(3).Budget, "The budget for the fourth item of the transaction should be present.");
+                    Assert.AreEqual(expected.Items.ElementAt(3).BudgetId, actual.Items.ElementAt(3).Budget.Id, "The ID for the budget for the fourth item of the transaction should match.");
                 }
             }
 

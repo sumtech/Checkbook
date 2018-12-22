@@ -257,7 +257,107 @@ namespace Checkbook.Api.Tests.Controllers
         }
 
         /// <summary>
-        /// Tests for the parameterless Put() method.
+        /// Tests for the Post() method.
+        /// </summary>
+        [TestClass]
+        public class PostMethod : TransactionsControllerTests
+        {
+            /// <summary>
+            /// The transaction used as an input.
+            /// </summary>
+            private Transaction transaction;
+
+            /// <summary>
+            /// Stub of the transaction returned by the repository.
+            /// </summary>
+            private Transaction stubTransaction;
+
+            /// <summary>
+            /// Initializes the tests for the method.
+            /// </summary>
+            [TestInitialize]
+            public override void Initialize()
+            {
+                base.Initialize();
+
+                this.transaction = new Transaction();
+
+                // Initialize the mock repository method.
+                this.stubTransaction = new Transaction();
+                this.mockTransactionsRepository
+                    .Setup(m => m.Add(It.IsAny<Transaction>(), It.IsAny<long>()))
+                    .Returns(this.stubTransaction);
+            }
+
+            /// <summary>
+            /// Verifies the result from the repository is retrieved correctly.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsRepositoryResult()
+            {
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Post(this.transaction);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockTransactionsRepository.Verify(m => m.Add(this.transaction, this.userId), Times.Once, "The add method should have been called.");
+                this.mockTransactionsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(okResult, "An OK response should have been returned.");
+                Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
+                Assert.AreEqual(this.stubTransaction, okResult.Value, "The result from the repository should have been returned.");
+            }
+
+            /// <summary>
+            /// Verifies the result from the repository is retrieved correctly.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsBadRequestErrorWhenTransactionNull()
+            {
+                // Arrange.
+                this.transaction = null;
+
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Post(this.transaction);
+                BadRequestObjectResult badRequestResult = result as BadRequestObjectResult;
+
+                // Assert.
+                this.mockTransactionsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(badRequestResult, "A bad request response should have been returned.");
+                Assert.AreEqual(400, badRequestResult.StatusCode, "The status code from the response should have been 405.");
+                string expectedMessage = "A transaction must be passed in for it to be saved.";
+                Assert.AreEqual(expectedMessage, badRequestResult.Value, "The error message should have been the result.");
+            }
+
+            /// <summary>
+            /// Verifies that general exceptions are handled correctly.
+            /// </summary>
+            [TestMethod]
+            public void HandlesGeneralException()
+            {
+                // Arrange.
+                this.mockTransactionsRepository
+                    .Setup(m => m.Add(It.IsAny<Transaction>(), It.IsAny<long>()))
+                    .Throws(new Exception());
+
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Post(this.transaction);
+                ObjectResult objectResult = result as ObjectResult;
+
+                // Assert.
+                Assert.IsNotNull(objectResult, "An object result should have been returned.");
+                Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
+                string expectedMessage = "There was an error saving the transaction.";
+                Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
+            }
+        }
+
+        /// <summary>
+        /// Tests for the Put() method.
         /// </summary>
         [TestClass]
         public class PutMethod : TransactionsControllerTests
