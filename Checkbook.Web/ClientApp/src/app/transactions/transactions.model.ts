@@ -7,9 +7,19 @@ import { Budget } from '../budgets/budgets.model';
  */
 export class Transaction {
     /**
+     * Constructor
+     * @constructor
+     */
+    constructor() {
+        this.id = 0;
+        this.date = new Date();
+        this.items = [];
+    }
+
+    /**
      * The unique identifier for the transaction.
      */
-    id: string;
+    id: number;
 
     /**
      * The date for the transaction.

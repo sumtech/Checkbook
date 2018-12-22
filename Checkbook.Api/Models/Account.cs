@@ -21,12 +21,15 @@ namespace Checkbook.Api.Models
 
         /// <summary>
         /// Gets or sets the unique identifier for the user who manages this
-        /// account.
+        /// account. Bank accounts are required to have a user. Merchant
+        /// accounts are required to not have a user.
         /// </summary>
-        public long UserId { get; set; }
+        public long? UserId { get; set; }
 
         /// <summary>
-        /// Gets or sets the user who manages this account.
+        /// Gets or sets the user who manages this account. Bank accounts are
+        /// required to have a user. Merchant accounts are required to not have
+        /// a user.
         /// </summary>
         public User User { get; set; }
 

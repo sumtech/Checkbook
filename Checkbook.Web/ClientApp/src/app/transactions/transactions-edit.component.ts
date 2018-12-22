@@ -58,11 +58,18 @@ export class TransactionsEditComponent implements OnInit {
      */
     ngOnInit(): void {
         const id: string = this.route.snapshot.paramMap.get('id');
-        this.transactionsService.get(id)
-            .subscribe((transaction) => {
-                transaction.date = new Date(transaction.date);
-                this.transaction = transaction;
-            });
+        if (id) {
+            // A transaction is being edited.
+            this.transactionsService.get(id)
+                .subscribe((transaction) => {
+                    transaction.date = new Date(transaction.date);
+                    this.transaction = transaction;
+                });
+        } else {
+            // A new transaction is being created.
+            this.transaction = new Transaction();
+            this.transaction.items.push({} as TransactionItem);
+        }
 
         this.accountsService.getBankAccounts()
             .subscribe((bankAccounts) => {
@@ -81,6 +88,13 @@ export class TransactionsEditComponent implements OnInit {
     }
 
     /**
+     * Create a new item entry to begin adding a new item.
+     */
+    startItem() {
+        this.transaction.items.push({} as TransactionItem);
+    }
+
+    /**
      * Remove item from the transaction.
      * @param item                  The item to remove.
      */
@@ -89,6 +103,25 @@ export class TransactionsEditComponent implements OnInit {
         this.transaction.items.splice(index, 1);
 
         ////delete this.transaction.items[index];
+    }
+
+    /**
+     * Returns the grand total amount.
+     * @returns                     The grand total amount.
+     */
+    grandTotal() {
+        if (!this.transaction || !this.transaction.items) {
+            return 0;
+        }
+
+        let total: number = 0;
+        for (let i: number = 0, len: number = this.transaction.items.length; i < len; i++) {
+            if (this.transaction.items[i].amount) {
+                total += this.transaction.items[i].amount;
+            }
+        }
+
+        return total;
     }
 
     /**

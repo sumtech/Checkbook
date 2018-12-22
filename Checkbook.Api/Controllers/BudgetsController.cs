@@ -34,7 +34,7 @@ namespace Checkbook.Api.Controllers
         [HttpGet("api/budgets")]
         [ProducesResponseType(typeof(List<Budget>), 200)]
         [ProducesResponseType(typeof(string), 500)]
-        public IActionResult GetAll()
+        public IActionResult Get()
         {
             long userId = 1;
 
@@ -48,6 +48,11 @@ namespace Checkbook.Api.Controllers
                 return this.StatusCode(500, "There was an error getting the budgets.");
             }
 
+            if (budgets == null)
+            {
+                return this.Ok(new List<Budget>());
+            }
+
             return this.Ok(budgets);
         }
 
@@ -56,7 +61,7 @@ namespace Checkbook.Api.Controllers
         /// </summary>
         /// <param name="budgetId">The unique ID for the budget.</param>
         /// <returns>The budget.</returns>
-        [HttpGet("api/budgets/{id:long}")]
+        [HttpGet("api/budgets/{budgetId:long}")]
         [ProducesResponseType(typeof(List<Budget>), 200)]
         [ProducesResponseType(typeof(string), 500)]
         [ProducesResponseType(404)]

@@ -39,10 +39,12 @@ namespace Checkbook.Api.Controllers
         [ProducesResponseType(typeof(string), 500)]
         public IActionResult Get()
         {
+            long userId = 1;
+
             IEnumerable<Transaction> transactions;
             try
             {
-                transactions = this.repository.GetTransactions();
+                transactions = this.repository.GetAll(userId);
             }
             catch
             {
@@ -60,18 +62,20 @@ namespace Checkbook.Api.Controllers
         /// <summary>
         /// Gets a specified transaction.
         /// </summary>
-        /// <param name="id">The unique ID for the transaction.</param>
+        /// <param name="transactionId">The unique ID for the transaction.</param>
         /// <returns>The list of transactions.</returns>
-        [HttpGet("api/transactions/{id:long}")]
+        [HttpGet("api/transactions/{transactionId:long}")]
         [ProducesResponseType(typeof(List<Transaction>), 200)]
         [ProducesResponseType(typeof(string), 500)]
         [ProducesResponseType(404)]
-        public IActionResult Get(long id)
+        public IActionResult Get(long transactionId)
         {
+            long userId = 1;
+
             Transaction transaction;
             try
             {
-                transaction = this.repository.GetTransaction(id);
+                transaction = this.repository.Get(transactionId, userId);
             }
             catch
             {
@@ -87,38 +91,71 @@ namespace Checkbook.Api.Controllers
         }
 
         /// <summary>
-        /// Updates a transaction.
+        /// Adds a transaction.
         /// </summary>
-        /// <param name="id">The unique ID for the transaction.</param>
         /// <param name="transaction">The transaction information.</param>
-        /// <returns>The updated transaction.</returns>
-        [HttpPut("api/transactions/{id:long}")]
+        /// <returns>The saved transaction.</returns>
+        [HttpPost("api/transactions")]
         [ProducesResponseType(typeof(List<Transaction>), 200)]
         [ProducesResponseType(typeof(string), 500)]
         [ProducesResponseType(404)]
-        public IActionResult Put(long id, [FromBody] Transaction transaction)
+        public IActionResult Post([FromBody] Transaction transaction)
         {
+            long userId = 1;
+
             if (transaction == null)
             {
-                return this.StatusCode(500, "A transaction must be passed in for it to be saved.");
-            }
-
-            if (transaction.Id != id)
-            {
-                return this.StatusCode(500, "The transaction ID values did not match.");
+                return this.BadRequest("A transaction must be passed in for it to be saved.");
             }
 
             Transaction savedTransaction;
             try
             {
-                savedTransaction = this.repository.SaveTransaction(transaction);
+                savedTransaction = this.repository.Add(transaction, userId);
             }
             catch
             {
                 return this.StatusCode(500, "There was an error saving the transaction.");
             }
 
-            return this.Ok(transaction);
+            return this.Ok(savedTransaction);
+        }
+
+        /// <summary>
+        /// Updates a transaction.
+        /// </summary>
+        /// <param name="transactionId">The unique ID for the transaction.</param>
+        /// <param name="transaction">The transaction information.</param>
+        /// <returns>The updated transaction.</returns>
+        [HttpPut("api/transactions/{transactionId:long}")]
+        [ProducesResponseType(typeof(List<Transaction>), 200)]
+        [ProducesResponseType(typeof(string), 500)]
+        [ProducesResponseType(404)]
+        public IActionResult Put(long transactionId, [FromBody] Transaction transaction)
+        {
+            long userId = 1;
+
+            if (transaction == null)
+            {
+                return this.BadRequest("A transaction must be passed in for it to be saved.");
+            }
+
+            if (transaction.Id != transactionId)
+            {
+                return this.BadRequest("The transaction ID values did not match.");
+            }
+
+            Transaction savedTransaction;
+            try
+            {
+                savedTransaction = this.repository.Save(transaction, userId);
+            }
+            catch
+            {
+                return this.StatusCode(500, "There was an error saving the transaction.");
+            }
+
+            return this.Ok(savedTransaction);
         }
     }
 }

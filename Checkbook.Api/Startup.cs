@@ -12,6 +12,8 @@ namespace Checkbook.Api
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
+    using Microsoft.Data.Sqlite;
+    using System.Data.Common;
 
     /// <summary>
     /// The startup configuration methods.
@@ -62,7 +64,15 @@ namespace Checkbook.Api
                 .AddJsonOptions(opts => opts.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore);
 
             // Register application services.
-            services.AddDbContext<CheckbookContext>(opt => opt.UseInMemoryDatabase("Checkbook"));
+            ////services.AddDbContext<CheckbookContext>(opt => opt.UseInMemoryDatabase("Checkbook"));
+
+            // Open a connection to a SQLite database.
+            string connectionString = new SqliteConnectionStringBuilder
+            {
+                DataSource = ":memory:",
+            }.ToString();
+            DbConnection dbConnection = new SqliteConnection(connectionString);
+            services.AddDbContext<CheckbookContext>(opt => opt.UseSqlite(dbConnection));
 
             services.AddScoped<IAccountsRepository, AccountsRepository>();
             services.AddScoped<IBudgetsRepository, BudgetsRepository>();
@@ -102,6 +112,9 @@ namespace Checkbook.Api
         /// <param name="context">The context to which data will be added.</param>
         private void AddTestData(CheckbookContext context)
         {
+            context.Database.OpenConnection();
+            context.Database.EnsureCreated();
+
             // Users
             User user1 = new User
             {

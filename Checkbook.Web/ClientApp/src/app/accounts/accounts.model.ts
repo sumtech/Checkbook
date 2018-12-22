@@ -6,7 +6,7 @@ export class Account {
     /**
      * The unique identifier for the account.
      */
-    id: string;
+    id: number;
 
     /**
      * The name of the account.

@@ -17,6 +17,11 @@ namespace Checkbook.Api.Tests.Controllers
     public class TransactionsControllerTests
     {
         /// <summary>
+        /// The user ID.
+        /// </summary>
+        private long userId = 1;
+
+        /// <summary>
         /// The mock implementation of the transactions repository.
         /// </summary>
         private Mock<ITransactionsRepository> mockTransactionsRepository;
@@ -53,7 +58,7 @@ namespace Checkbook.Api.Tests.Controllers
                 // Initialize the mock repository method.
                 this.stubTransactions = new List<Transaction>();
                 this.mockTransactionsRepository
-                    .Setup(m => m.GetTransactions())
+                    .Setup(m => m.GetAll(It.IsAny<long>()))
                     .Returns(this.stubTransactions);
             }
 
@@ -63,24 +68,44 @@ namespace Checkbook.Api.Tests.Controllers
             [TestMethod]
             public void ReturnsRepositoryResult()
             {
-                // Arrange.
-                Mock<ITransactionsRepository> mockTransactionsRepository = new Mock<ITransactionsRepository>();
-                mockTransactionsRepository
-                    .Setup(x => x.GetTransactions())
-                    .Returns(this.stubTransactions);
-
                 // Act.
-                TransactionsController controller = new TransactionsController(mockTransactionsRepository.Object);
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
                 IActionResult result = controller.Get();
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                mockTransactionsRepository.Verify(m => m.GetTransactions(), Times.Once, "The transactions should have been requested from the repository.");
-                mockTransactionsRepository.VerifyNoOtherCalls();
+                this.mockTransactionsRepository.Verify(m => m.GetAll(1), Times.Once, "The transactions should have been requested from the repository.");
+                this.mockTransactionsRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
                 Assert.AreEqual(this.stubTransactions, okResult.Value, "The result from the repository should have been returned.");
+            }
+
+            /// <summary>
+            /// Verifies an empty list is returned when the repository returns null.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsAnEmptyListWhenRepositoryReturnsNull()
+            {
+                // Arrange.
+                this.stubTransactions = null;
+                this.mockTransactionsRepository
+                    .Setup(m => m.GetAll(this.userId))
+                    .Returns(this.stubTransactions);
+
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Get();
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockTransactionsRepository.Verify(m => m.GetAll(this.userId), Times.Once, "The transactions should have been requested from the repository.");
+                this.mockTransactionsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(okResult, "An OK response should have been returned.");
+                Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
+                Assert.AreEqual(0, (okResult.Value as List<Transaction>).Count, "An empty list should be the result.");
             }
 
             /// <summary>
@@ -91,7 +116,7 @@ namespace Checkbook.Api.Tests.Controllers
             {
                 // Arrange.
                 this.mockTransactionsRepository
-                    .Setup(m => m.GetTransactions())
+                    .Setup(m => m.GetAll(It.IsAny<long>()))
                     .Throws(new Exception());
 
                 // Act.
@@ -114,9 +139,9 @@ namespace Checkbook.Api.Tests.Controllers
         public class GetMethod_Id : TransactionsControllerTests
         {
             /// <summary>
-            /// The ID used as an input.
+            /// The transaction ID used as an input.
             /// </summary>
-            private long id;
+            private long transactionId;
 
             /// <summary>
             /// The stub repository response.
@@ -132,12 +157,12 @@ namespace Checkbook.Api.Tests.Controllers
                 base.Initialize();
 
                 // Initialize the input(s).
-                this.id = 7;
+                this.transactionId = 7;
 
                 // Initialize the mock repository method.
                 this.stubTransaction = new Transaction();
                 this.mockTransactionsRepository
-                    .Setup(m => m.GetTransaction(It.IsAny<long>()))
+                    .Setup(m => m.Get(It.IsAny<long>(), It.IsAny<long>()))
                     .Returns(this.stubTransaction);
             }
 
@@ -149,16 +174,41 @@ namespace Checkbook.Api.Tests.Controllers
             {
                 // Act.
                 TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Get(id);
+                IActionResult result = controller.Get(transactionId);
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                mockTransactionsRepository.Verify(m => m.GetTransaction(this.id), Times.Once, "The transactions should have been requested from the repository.");
+                mockTransactionsRepository.Verify(m => m.Get(this.transactionId, this.userId), Times.Once, "The transactions should have been requested from the repository.");
                 mockTransactionsRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
                 Assert.AreEqual(this.stubTransaction, okResult.Value, "The result from the repository should have been returned.");
+            }
+
+            /// <summary>
+            /// Verifies the result from the repository is retrieved correctly.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsNotFoundWhenRepositoryReturnsNull()
+            {
+                // Arrange.
+                this.stubTransaction = null;
+                this.mockTransactionsRepository
+                    .Setup(m => m.Get(It.IsAny<long>(), It.IsAny<long>()))
+                    .Returns(this.stubTransaction);
+
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Get(transactionId);
+                NotFoundResult notFoundResult = result as NotFoundResult;
+
+                // Assert.
+                mockTransactionsRepository.Verify(m => m.Get(this.transactionId, this.userId), Times.Once, "The transaction should have been requested from the repository.");
+                mockTransactionsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(notFoundResult, "A Not Found response should have been returned.");
+                Assert.AreEqual(404, notFoundResult.StatusCode, "The status code from the response should have been 404.");
             }
 
             /// <summary>
@@ -169,12 +219,12 @@ namespace Checkbook.Api.Tests.Controllers
             {
                 // Arrange.
                 this.mockTransactionsRepository
-                    .Setup(m => m.GetTransaction(It.IsAny<long>()))
+                    .Setup(m => m.Get(It.IsAny<long>(), It.IsAny<long>()))
                     .Returns<Transaction>(null);
 
                 // Act.
                 TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Get(id);
+                IActionResult result = controller.Get(transactionId);
                 NotFoundResult notFoundResult = result as NotFoundResult;
 
                 // Assert.
@@ -190,18 +240,250 @@ namespace Checkbook.Api.Tests.Controllers
             {
                 // Arrange.
                 this.mockTransactionsRepository
-                    .Setup(m => m.GetTransaction(It.IsAny<long>()))
+                    .Setup(m => m.Get(It.IsAny<long>(), It.IsAny<long>()))
                     .Throws(new Exception());
 
                 // Act.
                 TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Get(id);
+                IActionResult result = controller.Get(transactionId);
                 ObjectResult objectResult = result as ObjectResult;
 
                 // Assert.
                 Assert.IsNotNull(objectResult, "An object result should have been returned.");
                 Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
                 string expectedMessage = "There was an error getting the transaction.";
+                Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
+            }
+        }
+
+        /// <summary>
+        /// Tests for the Post() method.
+        /// </summary>
+        [TestClass]
+        public class PostMethod : TransactionsControllerTests
+        {
+            /// <summary>
+            /// The transaction used as an input.
+            /// </summary>
+            private Transaction transaction;
+
+            /// <summary>
+            /// Stub of the transaction returned by the repository.
+            /// </summary>
+            private Transaction stubTransaction;
+
+            /// <summary>
+            /// Initializes the tests for the method.
+            /// </summary>
+            [TestInitialize]
+            public override void Initialize()
+            {
+                base.Initialize();
+
+                this.transaction = new Transaction();
+
+                // Initialize the mock repository method.
+                this.stubTransaction = new Transaction();
+                this.mockTransactionsRepository
+                    .Setup(m => m.Add(It.IsAny<Transaction>(), It.IsAny<long>()))
+                    .Returns(this.stubTransaction);
+            }
+
+            /// <summary>
+            /// Verifies the result from the repository is retrieved correctly.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsRepositoryResult()
+            {
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Post(this.transaction);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockTransactionsRepository.Verify(m => m.Add(this.transaction, this.userId), Times.Once, "The add method should have been called.");
+                this.mockTransactionsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(okResult, "An OK response should have been returned.");
+                Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
+                Assert.AreEqual(this.stubTransaction, okResult.Value, "The result from the repository should have been returned.");
+            }
+
+            /// <summary>
+            /// Verifies the result from the repository is retrieved correctly.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsBadRequestErrorWhenTransactionNull()
+            {
+                // Arrange.
+                this.transaction = null;
+
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Post(this.transaction);
+                BadRequestObjectResult badRequestResult = result as BadRequestObjectResult;
+
+                // Assert.
+                this.mockTransactionsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(badRequestResult, "A bad request response should have been returned.");
+                Assert.AreEqual(400, badRequestResult.StatusCode, "The status code from the response should have been 405.");
+                string expectedMessage = "A transaction must be passed in for it to be saved.";
+                Assert.AreEqual(expectedMessage, badRequestResult.Value, "The error message should have been the result.");
+            }
+
+            /// <summary>
+            /// Verifies that general exceptions are handled correctly.
+            /// </summary>
+            [TestMethod]
+            public void HandlesGeneralException()
+            {
+                // Arrange.
+                this.mockTransactionsRepository
+                    .Setup(m => m.Add(It.IsAny<Transaction>(), It.IsAny<long>()))
+                    .Throws(new Exception());
+
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Post(this.transaction);
+                ObjectResult objectResult = result as ObjectResult;
+
+                // Assert.
+                Assert.IsNotNull(objectResult, "An object result should have been returned.");
+                Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
+                string expectedMessage = "There was an error saving the transaction.";
+                Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
+            }
+        }
+
+        /// <summary>
+        /// Tests for the Put() method.
+        /// </summary>
+        [TestClass]
+        public class PutMethod : TransactionsControllerTests
+        {
+            /// <summary>
+            /// The id used as an input.
+            /// </summary>
+            private long id;
+
+            /// <summary>
+            /// The transaction used as an input.
+            /// </summary>
+            private Transaction transaction;
+
+            /// <summary>
+            /// Stub of the transaction returned by the repository.
+            /// </summary>
+            private Transaction stubTransaction;
+
+            /// <summary>
+            /// Initializes the tests for the method.
+            /// </summary>
+            [TestInitialize]
+            public override void Initialize()
+            {
+                base.Initialize();
+
+                this.id = 7;
+                this.transaction = new Transaction
+                {
+                    Id = this.id,
+                };
+
+                // Initialize the mock repository method.
+                this.stubTransaction = new Transaction();
+                this.mockTransactionsRepository
+                    .Setup(m => m.Save(It.IsAny<Transaction>(), It.IsAny<long>()))
+                    .Returns(this.stubTransaction);
+            }
+
+            /// <summary>
+            /// Verifies the result from the repository is retrieved correctly.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsRepositoryResult()
+            {
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.transaction);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockTransactionsRepository.Verify(m => m.Save(this.transaction, this.userId), Times.Once, "The save method should have been called.");
+                this.mockTransactionsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(okResult, "An OK response should have been returned.");
+                Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
+                Assert.AreEqual(this.stubTransaction, okResult.Value, "The result from the repository should have been returned.");
+            }
+
+            /// <summary>
+            /// Verifies the result from the repository is retrieved correctly.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsBadRequestErrorWhenTransactionNull()
+            {
+                // Arrange.
+                this.transaction = null;
+
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.transaction);
+                BadRequestObjectResult badRequestResult = result as BadRequestObjectResult;
+
+                // Assert.
+                this.mockTransactionsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(badRequestResult, "A bad request response should have been returned.");
+                Assert.AreEqual(400, badRequestResult.StatusCode, "The status code from the response should have been 405.");
+                string expectedMessage = "A transaction must be passed in for it to be saved.";
+                Assert.AreEqual(expectedMessage, badRequestResult.Value, "The error message should have been the result.");
+            }
+
+            /// <summary>
+            /// Verifies the result from the repository is retrieved correctly.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsBadRequestErrorWhenTransactionIdsMismatch()
+            {
+                // Arrange.
+                this.id = this.id + 2;
+
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.transaction);
+                BadRequestObjectResult badRequestResult = result as BadRequestObjectResult;
+
+                // Assert.
+                this.mockTransactionsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(badRequestResult, "A bad request response should have been returned.");
+                Assert.AreEqual(400, badRequestResult.StatusCode, "The status code from the response should have been 405.");
+                string expectedMessage = "The transaction ID values did not match.";
+                Assert.AreEqual(expectedMessage, badRequestResult.Value, "The error message should have been the result.");
+            }
+
+            /// <summary>
+            /// Verifies that general exceptions are handled correctly.
+            /// </summary>
+            [TestMethod]
+            public void HandlesGeneralException()
+            {
+                // Arrange.
+                this.mockTransactionsRepository
+                    .Setup(m => m.Save(It.IsAny<Transaction>(), It.IsAny<long>()))
+                    .Throws(new Exception());
+
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.transaction);
+                ObjectResult objectResult = result as ObjectResult;
+
+                // Assert.
+                Assert.IsNotNull(objectResult, "An object result should have been returned.");
+                Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
+                string expectedMessage = "There was an error saving the transaction.";
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
             }
         }
