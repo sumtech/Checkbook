@@ -48,6 +48,11 @@ namespace Checkbook.Api.Controllers
                 return this.StatusCode(500, "There was an error getting the bank accounts.");
             }
 
+            if (bankAccounts == null)
+            {
+                return this.Ok(new List<Account>());
+            }
+
             return this.Ok(bankAccounts);
         }
 
@@ -70,6 +75,11 @@ namespace Checkbook.Api.Controllers
                 return this.StatusCode(500, "There was an error getting the merchant accounts.");
             }
 
+            if (merchantAccounts == null)
+            {
+                return this.Ok(new List<Account>());
+            }
+
             return this.Ok(merchantAccounts);
         }
 
@@ -89,7 +99,7 @@ namespace Checkbook.Api.Controllers
             Account account;
             try
             {
-                account = this.accountsRepository.GetAccount(accountId, userId);
+                account = this.accountsRepository.Get(accountId, userId);
             }
             catch
             {

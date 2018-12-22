@@ -25,19 +25,19 @@ namespace Checkbook.Api.Repositories
         IEnumerable<Account> GetMerchantAccounts();
 
         /// <summary>
-        /// Add a new account to the data store.
-        /// </summary>
-        /// <param name="account">The new account to add.</param>
-        /// <param name="userId">The unique identifier for the current user.</param>
-        /// <returns>The saved account with the updated identifier.</returns>
-        Account Add(Account account, long userId);
-
-        /// <summary>
         /// Gets a specified account record.
         /// </summary>
         /// <param name="accountId">The unique identifier for the account.</param>
         /// <param name="userId">The unique identifier for the current user.</param>
         /// <returns>The account.</returns>
-        Account GetAccount(long accountId, long userId);
+        Account Get(long accountId, long? userId);
+
+        /// <summary>
+        /// Add a new account to the data store.
+        /// </summary>
+        /// <param name="account">The new account to add.</param>
+        /// <param name="userId">The unique identifier for the current user.</param>
+        /// <returns>The saved account with the updated identifier.</returns>
+        Account Add(Account account, long? userId);
     }
 }

@@ -21,11 +21,6 @@ namespace Checkbook.Api.Repositories
         }
 
         /// <summary>
-        /// Gets or sets the database set used to manage the transactions.
-        /// </summary>
-        public virtual DbSet<Transaction> Transactions { get; set; }
-
-        /// <summary>
         /// Gets or sets the database set used to manage the accounts.
         /// </summary>
         public virtual DbSet<Account> Accounts { get; set; }
@@ -39,6 +34,11 @@ namespace Checkbook.Api.Repositories
         /// Gets or sets the database set used to manage categories.
         /// </summary>
         public virtual DbSet<Category> Categories { get; set; }
+
+        /// <summary>
+        /// Gets or sets the database set used to manage the transactions.
+        /// </summary>
+        public virtual DbSet<Transaction> Transactions { get; set; }
 
         /// <summary>
         /// Gets or sets the database set used to manage budgets.
