@@ -61,7 +61,7 @@ namespace Checkbook.Api.Controllers
         /// </summary>
         /// <param name="budgetId">The unique ID for the budget.</param>
         /// <returns>The budget.</returns>
-        [HttpGet("api/budgets/{id:long}")]
+        [HttpGet("api/budgets/{budgetId:long}")]
         [ProducesResponseType(typeof(List<Budget>), 200)]
         [ProducesResponseType(typeof(string), 500)]
         [ProducesResponseType(404)]

@@ -64,7 +64,7 @@ namespace Checkbook.Api.Controllers
         /// </summary>
         /// <param name="transactionId">The unique ID for the transaction.</param>
         /// <returns>The list of transactions.</returns>
-        [HttpGet("api/transactions/{id:long}")]
+        [HttpGet("api/transactions/{transactionId:long}")]
         [ProducesResponseType(typeof(List<Transaction>), 200)]
         [ProducesResponseType(typeof(string), 500)]
         [ProducesResponseType(404)]
@@ -113,9 +113,8 @@ namespace Checkbook.Api.Controllers
             {
                 savedTransaction = this.repository.Add(transaction, userId);
             }
-            catch (System.Exception ex)
+            catch
             {
-                return this.StatusCode(500, ex.Message);
                 return this.StatusCode(500, "There was an error saving the transaction.");
             }
 

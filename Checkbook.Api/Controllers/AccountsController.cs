@@ -88,7 +88,7 @@ namespace Checkbook.Api.Controllers
         /// </summary>
         /// <param name="accountId">The unique ID for the account.</param>
         /// <returns>The account.</returns>
-        [HttpGet("api/accounts/{id:long}")]
+        [HttpGet("api/accounts/{accountId:long}")]
         [ProducesResponseType(typeof(List<Account>), 200)]
         [ProducesResponseType(typeof(string), 500)]
         [ProducesResponseType(404)]

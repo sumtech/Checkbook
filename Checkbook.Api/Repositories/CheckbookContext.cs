@@ -2,7 +2,6 @@
 
 namespace Checkbook.Api.Repositories
 {
-    using System;
     using Checkbook.Api.Models;
     using Microsoft.EntityFrameworkCore;
 
@@ -53,11 +52,31 @@ namespace Checkbook.Api.Repositories
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Transaction>().HasOne(m => m.FromAccount)
-                .WithMany().HasForeignKey(m => m.FromAccountId);
+            modelBuilder.Entity<Transaction>()
+                .HasKey(t => t.Id)
+                .HasName("TransactionId");
 
-            modelBuilder.Entity<Transaction>().HasOne(m => m.ToAccount)
-                .WithMany().HasForeignKey(m => m.ToAccountId);
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.Id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Transaction>()
+                .HasOne(m => m.FromAccount)
+                .WithMany()
+                .HasForeignKey(m => m.FromAccountId);
+
+            modelBuilder.Entity<Transaction>()
+                .HasOne(m => m.ToAccount)
+                .WithMany()
+                .HasForeignKey(m => m.ToAccountId);
+
+            modelBuilder.Entity<TransactionItem>()
+                .HasKey(t => t.Id)
+                .HasName("TransactionItemId");
+
+            modelBuilder.Entity<TransactionItem>()
+                .Property(t => t.Id)
+                .ValueGeneratedOnAdd();
         }
     }
 }

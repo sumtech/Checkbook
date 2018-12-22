@@ -50,13 +50,6 @@
             </mat-select>
         </mat-form-field>
 
-        <!-- Amount -->
-        <mat-form-field>
-            <input type="number" id="amount" name="amount" placeholder="Amount" required
-                   matInput
-                   [(ngModel)]="transaction.amount" />
-        </mat-form-field>
-
         <!-- Items -->
         <h2>Items</h2>
         <table>
@@ -99,7 +92,26 @@
                     </button>
                 </td>
             </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    <mat-form-field>
+                        <input type="number" name="grandTotal" readonly
+                               matInput
+                               [ngModel]="grandTotal()" />
+                    </mat-form-field>
+                </td>
+                <td></td>
+            </tr>
         </table>
+
+        <button type="button"
+                mat-button
+                color="primary"
+                (click)="startItem()">
+            Add Another Item
+        </button>
 
         <!-- Notes -->
         <mat-form-field>
