@@ -13,6 +13,8 @@ export class TransactionsListComponent implements OnInit {
      */
     public transactions: Transaction[];
 
+    public columnsToDisplay: string[] = ['id', 'date', 'from', 'to', 'amount', 'actions'];
+
     /**
      * The constructor.
      * @constructor

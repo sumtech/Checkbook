@@ -1,51 +1,36 @@
-<div class="container">
+<div>
     <!-- Cancel -->
-    <a style="float:right;"
-       [routerLink]="['/transactions']"
-       *ngIf="transaction"
-       mat-button
-       color="primary">
-        Cancel
-    </a>
+    <a style="float:right;" [routerLink]="['/transactions']" *ngIf="transaction" mat-button color="primary">Cancel</a>
 
     <!-- Heading -->
     <h1>Transaction</h1>
 
-    <form class="standard-form"
-          *ngIf="transaction"
-          (ngSubmit)="onSubmit()"
-          #transactionForm="ngForm">
+    <form *ngIf="transaction" (ngSubmit)="onSubmit()" #transactionForm="ngForm">
 
         <!-- ID -->
         <mat-form-field>
-            <input type="text" [value]="transaction.id" placeholder="Id" readonly
-                   matInput>
+            <input type="text" [value]="transaction.id" placeholder="Id" readonly matInput>
             <input type="hidden" id="transaction-id" name="id" [value]="transaction.id" />
         </mat-form-field>
 
         <!-- Date -->
         <mat-form-field>
-            <input type="text" id="date" name="date" placeholder="Date" required
-                   matInput
-                   [matDatepicker]="transactionDatePicker"
-                   [(ngModel)]="transaction.date">
-            <mat-datepicker-toggle [for]="transactionDatePicker"
-                                   matSuffix></mat-datepicker-toggle>
+            <input type="text" id="date" name="date" placeholder="Date" required matInput [matDatepicker]="transactionDatePicker"
+                [(ngModel)]="transaction.date">
+            <mat-datepicker-toggle [for]="transactionDatePicker" matSuffix></mat-datepicker-toggle>
             <mat-datepicker #transactionDatePicker></mat-datepicker>
         </mat-form-field>
 
         <!-- From -->
         <mat-form-field>
-            <mat-select id="from-account-id" name="from-account-id" placeholder="From Account" required
-                        [(ngModel)]="transaction.fromAccountId">
+            <mat-select id="from-account-id" name="from-account-id" placeholder="From Account" required [(ngModel)]="transaction.fromAccountId">
                 <mat-option *ngFor="let account of bankAccounts" [value]="account.id">{{account.name}}</mat-option>
             </mat-select>
         </mat-form-field>
 
         <!-- To -->
         <mat-form-field>
-            <mat-select id="to-account-id" name="to-account-id" placeholder="To Account" required
-                        [(ngModel)]="transaction.toAccountId">
+            <mat-select id="to-account-id" name="to-account-id" placeholder="To Account" required [(ngModel)]="transaction.toAccountId">
                 <mat-option *ngFor="let account of merchantAccounts" [value]="account.id">{{account.name}}</mat-option>
             </mat-select>
         </mat-form-field>
@@ -62,34 +47,24 @@
             <tr *ngFor="let item of transaction.items; let i = index">
                 <td>
                     <mat-form-field>
-                        <mat-select name="transaction[{{i}}].budgetId" required
-                                    [(ngModel)]="item.budgetId">
-                            <mat-option *ngFor="let budget of budgets"
-                                        [value]="budget.id">{{budget.category.name + ': ' + budget.name}}</mat-option>
+                        <mat-select name="transaction[{{i}}].budgetId" required [(ngModel)]="item.budgetId">
+                            <mat-option *ngFor="let budget of budgets" [value]="budget.id">{{budget.category.name + ':'
+                                + budget.name}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </td>
                 <td>
                     <mat-form-field>
-                        <input type="text" name="transaction[{{i}}].description"
-                               matInput
-                               [(ngModel)]="item.description">
+                        <input type="text" name="transaction[{{i}}].description" matInput [(ngModel)]="item.description">
                     </mat-form-field>
                 </td>
                 <td>
                     <mat-form-field>
-                        <input type="number" name="transaction[{{i}}].amount" required
-                               matInput
-                               [(ngModel)]="item.amount" />
+                        <input type="number" name="transaction[{{i}}].amount" required matInput [(ngModel)]="item.amount" />
                     </mat-form-field>
                 </td>
                 <td>
-                    <button type="button"
-                            mat-button
-                            color="primary"
-                            (click)="remove(item)">
-                        Delete
-                    </button>
+                    <button type="button" mat-button color="primary" (click)="remove(item)">Delete</button>
                 </td>
             </tr>
             <tr>
@@ -97,39 +72,24 @@
                 <td></td>
                 <td>
                     <mat-form-field>
-                        <input type="number" name="grandTotal" readonly
-                               matInput
-                               [ngModel]="grandTotal()" />
+                        <input type="number" name="grandTotal" readonly matInput [ngModel]="grandTotal()" />
                     </mat-form-field>
                 </td>
                 <td></td>
             </tr>
         </table>
 
-        <button type="button"
-                mat-button
-                color="primary"
-                (click)="startItem()">
-            Add Another Item
-        </button>
+        <button type="button" mat-button color="primary" (click)="startItem()">Add Another Item</button>
 
         <!-- Notes -->
         <mat-form-field>
-            <textarea id="notes" name="notes" placeholder="Notes"
-                      matInput
-                      [(ngModel)]="transaction.notes"></textarea>
+            <textarea id="notes" name="notes" placeholder="Notes" matInput [(ngModel)]="transaction.notes"></textarea>
         </mat-form-field>
 
         <!-- Is Processed -->
-        <mat-checkbox id="is-processed" name="is-processed"
-                      color="primary"
-                      [(ngModel)]="transaction.isProcessed">Is Processed</mat-checkbox>
+        <mat-checkbox id="is-processed" name="is-processed" color="primary" [(ngModel)]="transaction.isProcessed">Is
+            Processed</mat-checkbox>
         <!-- Save -->
-        <button type="submit"
-                mat-button
-                color="primary"
-                [disabled]="!transactionForm.form.valid">
-            Save
-        </button>
+        <button type="submit" mat-button color="primary" [disabled]="!transactionForm.form.valid">Save</button>
     </form>
 </div>
