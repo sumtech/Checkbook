@@ -1,38 +1,47 @@
-<div class="container">
-    <div class="btn-group btn-group-sm float-right mt-0">
-        <a href="/transactions/new"><div class="btn btn-primary">Payment</div></a>
-        <a href="/transactions/new"><div class="btn btn-primary">Transfer</div></a>
-        <a href="/transactions/new"><div class="btn btn-primary">Deposity/Refund</div></a>
+<div>
+    <div class="flex">
+        <span class="filler"></span>
+        <a [routerLink]="['/transactions/new']" mat-button color="primary">Payment</a>
+        <a [routerLink]="['/transactions/new']" mat-button color="primary">Transfer</a>
+        <a [routerLink]="['/transactions/new']" mat-button color="primary">Deposit/Refund</a>
     </div>
 
     <h1>Transactions</h1>
 
-    <div class="row">
-        <div class="col-1"><strong>ID</strong></div>
-        <div class="col-2"><strong>Date</strong></div>
-        <div class="col-3"><strong>From</strong></div>
-        <div class="col-3"><strong>To</strong></div>
-        <div class="col-3"><strong>Amount</strong></div>
-    </div>
-    <div class="row bg-light rounded mt-1" *ngFor="let transaction of transactions">
-        <div class="col-1">
-            <a [routerLink]="['/transactions/edit/' + transaction.id]">{{transaction.id}}</a>
-        </div>
-        <div class="col-2">
-            <a [routerLink]="['/transactions/edit/' + transaction.id]">{{transaction.date | date:'shortDate'}}</a>
-        </div>
-        <div class="col-3">
-            <a [routerLink]="['/transactions/edit/' + transaction.id]">{{transaction.fromAccount.name}}</a>
-        </div>
-        <div class="col-3">
-            <a [routerLink]="['/transactions/edit/' + transaction.id]">{{transaction.toAccount.name}}</a>
-        </div>
-        <div class="col-2">
-            <a [routerLink]="['/transactions/edit/' + transaction.id]">{{transaction.amount | currency:'USD'}}</a>
-        </div>
-        <div class="col-1">
-            <a class="btn btn-sm btn-primary"
-               [routerLink]="['/transactions/edit/' + transaction.id]">Edit</a>
-        </div>
-    </div>
+    <table mat-table [dataSource]="transactions">
+        <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let transaction">{{transaction.id}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let transaction">{{transaction.date | date:'shortDate'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="from">
+            <th mat-header-cell *matHeaderCellDef>From</th>
+            <td mat-cell *matCellDef="let transaction">{{transaction.fromAccount.name}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="to">
+            <th mat-header-cell *matHeaderCellDef>To</th>
+            <td mat-cell *matCellDef="let transaction">{{transaction.toAccount.name}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef>Amount</th>
+            <td mat-cell *matCellDef="let transaction">{{transaction.amount | currency:'USD'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let transaction">
+                <a [routerLink]="['/transactions/edit/' + transaction.id]" mat-button color="primary">Edit</a>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+    </table>
 </div>

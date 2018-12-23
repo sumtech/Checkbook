@@ -18,11 +18,13 @@
                         "progress": true,
                         "polyfills": "src/polyfills.ts",
                         "assets": [
-                            "src/assets"
+                            "src/assets",
+                            "src/favicon.ico",
+                            "src/favicon.png"
                         ],
                         "styles": [
                             "src/styles.scss",
-                            "node_modules/bootstrap/dist/css/bootstrap.min.css"
+                            "src/theme.scss"
                         ],
                         "scripts": []
                     },
@@ -74,7 +76,7 @@
                         "scripts": [],
                         "styles": [
                             "src/styles.scss",
-                            "node_modules/bootstrap/dist/css/bootstrap.min.css"
+                            "src/theme.scss"
                         ],
                         "assets": [
                             "src/assets"

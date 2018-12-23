@@ -56,7 +56,7 @@ export class BudgetsService {
     public save(budget: Budget): Observable<Budget> {
         let url: string = this.baseApiUrl;
         if (budget.id) {
-            url += encodeURIComponent(budget.id) + '/';
+            url += budget.id + '/';
             return this.http.put<Budget>(url, budget);
         } else {
             return this.http.post<Budget>(url, budget);

@@ -27,7 +27,6 @@
     "@angular/router": "7.0.3",
     "@nguniversal/module-map-ngfactory-loader": "^7.0.2",
     "aspnet-prerendering": "^3.0.1",
-    "bootstrap": "^4.1.3",
     "core-js": "^2.5.7",
     "hammerjs": "^2.0.8",
     "node-sass": "^4.10.0",

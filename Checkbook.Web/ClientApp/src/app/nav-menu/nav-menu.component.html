@@ -1,26 +1,16 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <!-- Brand -->
-    <a class="navbar-brand" [routerLink]="['/']">Checkbook</a>
-
-    <!-- Toggle -->
-    <button class="navbar-toggler" type="button">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <!-- Toggled sections -->
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item"
-                [routerLinkActive]="['link-active']"
-                [routerLinkActiveOptions]="{ exact: true }">
-                <a class="nav-link"
-                   [routerLink]="['/']">Home</a>
-            </li>
-            <li class="nav-item"
-                [routerLinkActive]="['link-active']">
-                <a class="nav-link"
-                   [routerLink]="['/transactions']">Transactions</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+<mat-toolbar color="primary">
+    <span>Checkbook</span>
+    <span class="filler"></span>
+    <span [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }">
+        <a [routerLink]="['/']" mat-flat-button color="primary">Transactions</a>
+    </span>
+    <span [routerLinkActive]="['link-active']">
+        <a [routerLink]="['/my-accounts']" mat-flat-button color="primary">My Accounts</a>
+    </span>
+    <span [routerLinkActive]="['link-active']">
+        <a [routerLink]="['/merchant-accounts']" mat-flat-button color="primary">Merchant Accounts</a>
+    </span>
+    <span [routerLinkActive]="['link-active']">
+        <a [routerLink]="['/budgets']" mat-flat-button color="primary">Budgets</a>
+    </span>
+</mat-toolbar>

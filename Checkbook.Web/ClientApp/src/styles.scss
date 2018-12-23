@@ -1,15 +1,49 @@
 /* You can add global styles to this file, and also import other style files */
-@import '~@angular/material/prebuilt-themes/indigo-pink.css';
-/*@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';*/
-/*@import '~@angular/material/prebuilt-themes/pink-bluegrey.css';*/
-/*@import '~@angular/material/prebuilt-themes/purple-green.css';*/
 
+@import '~@angular/material/theming';
+// Define the colors to be used by the theme.
+$app-primary: mat-palette($mat-green, 700);
+// $app-accent: mat-palette($mat-brown, 400);
+// $app-accent: mat-palette($mat-deep-orange, 400);
+$app-accent: mat-palette($mat-deep-purple, 500);
+$app-warn: mat-palette($mat-deep-orange);
+$app-theme: mat-dark-theme($app-primary, $app-accent, $app-warn);
+// Create color variables to bebe available in all the project.
+$primary-bg: mat-color($app-primary);
+$accent-bg: mat-color($app-accent);
+$warn-bg: mat-color($app-accent);
+$primary-color: mat-contrast($app-primary, 700);
+$accent-color: mat-contrast($app-accent, 500);
+$warn-color: mat-contrast($app-accent, 500);
+* {
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+body {
+    padding: 0;
+    margin: 0;
+}
 
-.standard-form {
+form {
     display: flex;
     flex-direction: column;
-
-    > * {
+    >* {
         width: 100%;
     }
+}
+
+table {
+    width: 100%;
+}
+
+.flex {
+    display: flex;
+}
+
+/**
+ * This fills the remaining space, by using flexbox.
+ * Every toolbar row uses a flexbox row layout.
+ */
+
+.filler {
+    flex: 1 1 auto;
 }
