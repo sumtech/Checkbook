@@ -12,14 +12,14 @@ namespace Checkbook.Api.Tests.Controllers
     using Moq;
 
     /// <summary>
-    /// Tests for the <see cref="BudgetsController"/> class.
+    /// Tests for the <see cref="CategoriesController"/> class.
     /// </summary>
-    public class BudgetsControllerTests
+    public class CategoriesControllerTests
     {
         /// <summary>
-        /// The mock implementation of the budgets repository.
+        /// The mock implementation of the categories repository.
         /// </summary>
-        private Mock<IBudgetsRepository> mockBudgetsRepository;
+        private Mock<ICategoriesRepository> mockCategoriesRepository;
 
         /// <summary>
         /// Initializes the tests for the class.
@@ -28,14 +28,14 @@ namespace Checkbook.Api.Tests.Controllers
         public virtual void Initialize()
         {
             // Initialize the mock object(s).
-            this.mockBudgetsRepository = new Mock<IBudgetsRepository>();
+            this.mockCategoriesRepository = new Mock<ICategoriesRepository>();
         }
 
         /// <summary>
         /// Tests for the parameterless Get() method.
         /// </summary>
         [TestClass]
-        public class GetMethod : BudgetsControllerTests
+        public class GetMethod : CategoriesControllerTests
         {
             /// <summary>
             /// The user ID.
@@ -45,7 +45,7 @@ namespace Checkbook.Api.Tests.Controllers
             /// <summary>
             /// The stub repository response.
             /// </summary>
-            private List<Budget> stubBudgets;
+            private List<Category> stubCategories;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -58,10 +58,10 @@ namespace Checkbook.Api.Tests.Controllers
                 this.userId = 1;
 
                 // Initialize the mock repository method.
-                this.stubBudgets = new List<Budget>();
-                this.mockBudgetsRepository
+                this.stubCategories = new List<Category>();
+                this.mockCategoriesRepository
                     .Setup(m => m.GetAll(It.IsAny<long>()))
-                    .Returns(this.stubBudgets);
+                    .Returns(this.stubCategories);
             }
 
             /// <summary>
@@ -71,17 +71,17 @@ namespace Checkbook.Api.Tests.Controllers
             public void ReturnsRepositoryResult()
             {
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
                 IActionResult result = controller.Get();
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                this.mockBudgetsRepository.Verify(m => m.GetAll(this.userId), Times.Once, "The budgets should have been requested from the repository.");
-                this.mockBudgetsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.Verify(m => m.GetAll(this.userId), Times.Once, "The categories should have been requested from the repository.");
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
-                Assert.AreEqual(this.stubBudgets, okResult.Value, "The result from the repository should have been returned.");
+                Assert.AreEqual(this.stubCategories, okResult.Value, "The result from the repository should have been returned.");
             }
 
             /// <summary>
@@ -91,23 +91,23 @@ namespace Checkbook.Api.Tests.Controllers
             public void ReturnsAnEmptyListWhenRepositoryReturnsNull()
             {
                 // Arrange.
-                this.stubBudgets = null;
-                this.mockBudgetsRepository
+                this.stubCategories = null;
+                this.mockCategoriesRepository
                     .Setup(m => m.GetAll(It.IsAny<long>()))
-                    .Returns(this.stubBudgets);
+                    .Returns(this.stubCategories);
 
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
                 IActionResult result = controller.Get();
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                this.mockBudgetsRepository.Verify(m => m.GetAll(this.userId), Times.Once, "The budgets should have been requested from the repository.");
-                this.mockBudgetsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.Verify(m => m.GetAll(this.userId), Times.Once, "The categories should have been requested from the repository.");
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
-                Assert.AreEqual(0, (okResult.Value as List<Budget>).Count, "An empty list should be the result.");
+                Assert.AreEqual(0, (okResult.Value as List<Category>).Count, "An empty list should be the result.");
             }
 
             /// <summary>
@@ -117,19 +117,19 @@ namespace Checkbook.Api.Tests.Controllers
             public void HandlesGeneralException()
             {
                 // Arrange.
-                this.mockBudgetsRepository
+                this.mockCategoriesRepository
                     .Setup(m => m.GetAll(It.IsAny<long>()))
                     .Throws(new Exception());
 
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
                 IActionResult result = controller.Get();
                 ObjectResult objectResult = result as ObjectResult;
 
                 // Assert.
                 Assert.IsNotNull(objectResult, "An object result should have been returned.");
                 Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
-                string expectedMessage = "There was an error getting the budgets.";
+                string expectedMessage = "There was an error getting the categories.";
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
             }
         }
@@ -138,7 +138,7 @@ namespace Checkbook.Api.Tests.Controllers
         /// Tests for the Get() method that takes in an ID value.
         /// </summary>
         [TestClass]
-        public class GetMethod_Id : BudgetsControllerTests
+        public class GetMethod_Id : CategoriesControllerTests
         {
             /// <summary>
             /// The user ID.
@@ -153,7 +153,7 @@ namespace Checkbook.Api.Tests.Controllers
             /// <summary>
             /// The stub repository response.
             /// </summary>
-            private Budget stubBudget;
+            private Category stubCategory;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -168,10 +168,10 @@ namespace Checkbook.Api.Tests.Controllers
                 this.id = 7;
 
                 // Initialize the mock repository method.
-                this.stubBudget = new Budget();
-                this.mockBudgetsRepository
+                this.stubCategory = new Category();
+                this.mockCategoriesRepository
                     .Setup(m => m.Get(It.IsAny<long>(), It.IsAny<long>()))
-                    .Returns(this.stubBudget);
+                    .Returns(this.stubCategory);
             }
 
             /// <summary>
@@ -181,17 +181,17 @@ namespace Checkbook.Api.Tests.Controllers
             public void ReturnsRepositoryResult()
             {
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
-                IActionResult result = controller.Get(id);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Get(this.id);
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                mockBudgetsRepository.Verify(m => m.Get(this.id, this.userId), Times.Once, "The budgets should have been requested from the repository.");
-                mockBudgetsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.Verify(m => m.Get(this.id, this.userId), Times.Once, "The categories should have been requested from the repository.");
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
-                Assert.AreEqual(this.stubBudget, okResult.Value, "The result from the repository should have been returned.");
+                Assert.AreEqual(this.stubCategory, okResult.Value, "The result from the repository should have been returned.");
             }
 
             /// <summary>
@@ -201,19 +201,19 @@ namespace Checkbook.Api.Tests.Controllers
             public void ReturnsNotFoundWhenRepositoryReturnsNull()
             {
                 // Arrange.
-                this.stubBudget = null;
-                this.mockBudgetsRepository
+                this.stubCategory = null;
+                this.mockCategoriesRepository
                     .Setup(m => m.Get(It.IsAny<long>(), It.IsAny<long>()))
-                    .Returns(this.stubBudget);
+                    .Returns(this.stubCategory);
 
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
-                IActionResult result = controller.Get(id);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Get(this.id);
                 NotFoundResult notFoundResult = result as NotFoundResult;
 
                 // Assert.
-                mockBudgetsRepository.Verify(m => m.Get(this.id, this.userId), Times.Once, "The budget should have been requested from the repository.");
-                mockBudgetsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.Verify(m => m.Get(this.id, this.userId), Times.Once, "The category should have been requested from the repository.");
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(notFoundResult, "A Not Found response should have been returned.");
                 Assert.AreEqual(404, notFoundResult.StatusCode, "The status code from the response should have been 404.");
@@ -226,13 +226,13 @@ namespace Checkbook.Api.Tests.Controllers
             public void HandlesNotFound()
             {
                 // Arrange.
-                this.mockBudgetsRepository
+                this.mockCategoriesRepository
                     .Setup(m => m.Get(It.IsAny<long>(), It.IsAny<long>()))
-                    .Returns<Budget>(null);
+                    .Returns<Category>(null);
 
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
-                IActionResult result = controller.Get(id);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Get(this.id);
                 NotFoundResult notFoundResult = result as NotFoundResult;
 
                 // Assert.
@@ -247,19 +247,19 @@ namespace Checkbook.Api.Tests.Controllers
             public void HandlesGeneralException()
             {
                 // Arrange.
-                this.mockBudgetsRepository
+                this.mockCategoriesRepository
                     .Setup(m => m.Get(It.IsAny<long>(), It.IsAny<long>()))
                     .Throws(new Exception());
 
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
-                IActionResult result = controller.Get(id);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Get(this.id);
                 ObjectResult objectResult = result as ObjectResult;
 
                 // Assert.
                 Assert.IsNotNull(objectResult, "An object result should have been returned.");
                 Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
-                string expectedMessage = "There was an error getting the budget.";
+                string expectedMessage = "There was an error getting the category.";
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
             }
         }
@@ -268,12 +268,12 @@ namespace Checkbook.Api.Tests.Controllers
         /// Tests for the Post() method.
         /// </summary>
         [TestClass]
-        public class PostMethod : BudgetsControllerTests
+        public class PostMethod : CategoriesControllerTests
         {
             /// <summary>
-            /// The budget used as an input.
+            /// The category used as an input.
             /// </summary>
-            private Budget budget;
+            private Category category;
 
             /// <summary>
             /// The user ID used as an input.
@@ -281,9 +281,9 @@ namespace Checkbook.Api.Tests.Controllers
             private long userId;
 
             /// <summary>
-            /// Stub of the budget returned by the repository.
+            /// Stub of the category returned by the repository.
             /// </summary>
-            private Budget stubBudget;
+            private Category stubCategory;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -294,13 +294,13 @@ namespace Checkbook.Api.Tests.Controllers
                 base.Initialize();
 
                 this.userId = 1;
-                this.budget = new Budget();
+                this.category = new Category();
 
                 // Initialize the mock repository method.
-                this.stubBudget = new Budget();
-                this.mockBudgetsRepository
-                    .Setup(m => m.Add(It.IsAny<Budget>(), It.IsAny<long>()))
-                    .Returns(this.stubBudget);
+                this.stubCategory = new Category();
+                this.mockCategoriesRepository
+                    .Setup(m => m.Add(It.IsAny<Category>(), It.IsAny<long>()))
+                    .Returns(this.stubCategory);
             }
 
             /// <summary>
@@ -310,39 +310,39 @@ namespace Checkbook.Api.Tests.Controllers
             public void ReturnsRepositoryResult()
             {
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
-                IActionResult result = controller.Post(this.budget);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Post(this.category);
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                this.mockBudgetsRepository.Verify(m => m.Add(this.budget, this.userId), Times.Once, "The add method should have been called.");
-                this.mockBudgetsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.Verify(m => m.Add(this.category, this.userId), Times.Once, "The add method should have been called.");
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
-                Assert.AreEqual(this.stubBudget, okResult.Value, "The result from the repository should have been returned.");
+                Assert.AreEqual(this.stubCategory, okResult.Value, "The result from the repository should have been returned.");
             }
 
             /// <summary>
             /// Verifies the result from the repository is retrieved correctly.
             /// </summary>
             [TestMethod]
-            public void ReturnsBadRequestErrorWhenBudgetNull()
+            public void ReturnsBadRequestErrorWhenCategoryNull()
             {
                 // Arrange.
-                this.budget = null;
+                this.category = null;
 
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
-                IActionResult result = controller.Post(this.budget);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Post(this.category);
                 BadRequestObjectResult badRequestResult = result as BadRequestObjectResult;
 
                 // Assert.
-                this.mockBudgetsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(badRequestResult, "A bad request response should have been returned.");
                 Assert.AreEqual(400, badRequestResult.StatusCode, "The status code from the response should have been 405.");
-                string expectedMessage = "A budget must be passed in for it to be saved.";
+                string expectedMessage = "A category must be passed in for it to be saved.";
                 Assert.AreEqual(expectedMessage, badRequestResult.Value, "The error message should have been the result.");
             }
 
@@ -353,19 +353,19 @@ namespace Checkbook.Api.Tests.Controllers
             public void HandlesGeneralException()
             {
                 // Arrange.
-                this.mockBudgetsRepository
-                    .Setup(m => m.Add(It.IsAny<Budget>(), It.IsAny<long>()))
+                this.mockCategoriesRepository
+                    .Setup(m => m.Add(It.IsAny<Category>(), It.IsAny<long>()))
                     .Throws(new Exception());
 
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
-                IActionResult result = controller.Post(this.budget);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Post(this.category);
                 ObjectResult objectResult = result as ObjectResult;
 
                 // Assert.
                 Assert.IsNotNull(objectResult, "An object result should have been returned.");
                 Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
-                string expectedMessage = "There was an error saving the budget.";
+                string expectedMessage = "There was an error saving the category.";
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
             }
 
@@ -376,12 +376,12 @@ namespace Checkbook.Api.Tests.Controllers
             public void AddsUserIdToEntity()
             {
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
-                IActionResult result = controller.Post(this.budget);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Post(this.category);
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                this.mockBudgetsRepository.Verify(m => m.Add(It.Is<Budget>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
+                this.mockCategoriesRepository.Verify(m => m.Add(It.Is<Category>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
             }
         }
 
@@ -389,7 +389,7 @@ namespace Checkbook.Api.Tests.Controllers
         /// Tests for the Put() method.
         /// </summary>
         [TestClass]
-        public class PutMethod : BudgetsControllerTests
+        public class PutMethod : CategoriesControllerTests
         {
             /// <summary>
             /// The id used as an input.
@@ -402,14 +402,14 @@ namespace Checkbook.Api.Tests.Controllers
             private long userId;
 
             /// <summary>
-            /// The budget used as an input.
+            /// The category used as an input.
             /// </summary>
-            private Budget budget;
+            private Category category;
 
             /// <summary>
-            /// Stub of the budget returned by the repository.
+            /// Stub of the category returned by the repository.
             /// </summary>
-            private Budget stubBudget;
+            private Category stubCategory;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -420,17 +420,17 @@ namespace Checkbook.Api.Tests.Controllers
                 base.Initialize();
 
                 this.id = 7;
-                this.budget = new Budget
+                this.category = new Category
                 {
-                    Id = this.id,
+                    Id = id,
                 };
                 this.userId = 1;
 
                 // Initialize the mock repository method.
-                this.stubBudget = new Budget();
-                this.mockBudgetsRepository
-                    .Setup(m => m.Save(It.IsAny<Budget>(), It.IsAny<long>()))
-                    .Returns(this.stubBudget);
+                this.stubCategory = new Category();
+                this.mockCategoriesRepository
+                    .Setup(m => m.Save(It.IsAny<Category>(), It.IsAny<long>()))
+                    .Returns(this.stubCategory);
             }
 
             /// <summary>
@@ -440,39 +440,39 @@ namespace Checkbook.Api.Tests.Controllers
             public void ReturnsRepositoryResult()
             {
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
-                IActionResult result = controller.Put(this.id, this.budget);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Put(this.id, this.category);
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                this.mockBudgetsRepository.Verify(m => m.Save(this.budget, this.userId), Times.Once, "The save method should have been called.");
-                this.mockBudgetsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.Verify(m => m.Save(this.category, this.userId), Times.Once, "The save method should have been called.");
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
-                Assert.AreEqual(this.stubBudget, okResult.Value, "The result from the repository should have been returned.");
+                Assert.AreEqual(this.stubCategory, okResult.Value, "The result from the repository should have been returned.");
             }
 
             /// <summary>
             /// Verifies the result from the repository is retrieved correctly.
             /// </summary>
             [TestMethod]
-            public void ReturnsBadRequestErrorWhenBudgetNull()
+            public void ReturnsBadRequestErrorWhenCategoryNull()
             {
                 // Arrange.
-                this.budget = null;
+                this.category = null;
 
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
-                IActionResult result = controller.Put(this.id, this.budget);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Put(this.id, this.category);
                 BadRequestObjectResult badRequestResult = result as BadRequestObjectResult;
 
                 // Assert.
-                this.mockBudgetsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(badRequestResult, "A bad request response should have been returned.");
                 Assert.AreEqual(400, badRequestResult.StatusCode, "The status code from the response should have been 405.");
-                string expectedMessage = "A budget must be passed in for it to be saved.";
+                string expectedMessage = "A category must be passed in for it to be saved.";
                 Assert.AreEqual(expectedMessage, badRequestResult.Value, "The error message should have been the result.");
             }
 
@@ -480,22 +480,22 @@ namespace Checkbook.Api.Tests.Controllers
             /// Verifies the result from the repository is retrieved correctly.
             /// </summary>
             [TestMethod]
-            public void ReturnsBadRequestErrorWhenBudgetIdsMismatch()
+            public void ReturnsBadRequestErrorWhenCategoryIdsMismatch()
             {
                 // Arrange.
                 this.id = this.id + 2;
 
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
-                IActionResult result = controller.Put(this.id, this.budget);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Put(this.id, this.category);
                 BadRequestObjectResult badRequestResult = result as BadRequestObjectResult;
 
                 // Assert.
-                this.mockBudgetsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(badRequestResult, "A bad request response should have been returned.");
                 Assert.AreEqual(400, badRequestResult.StatusCode, "The status code from the response should have been 405.");
-                string expectedMessage = "The budget ID values did not match.";
+                string expectedMessage = "The category ID values did not match.";
                 Assert.AreEqual(expectedMessage, badRequestResult.Value, "The error message should have been the result.");
             }
 
@@ -506,19 +506,19 @@ namespace Checkbook.Api.Tests.Controllers
             public void HandlesGeneralException()
             {
                 // Arrange.
-                this.mockBudgetsRepository
-                    .Setup(m => m.Save(It.IsAny<Budget>(), It.IsAny<long>()))
+                this.mockCategoriesRepository
+                    .Setup(m => m.Save(It.IsAny<Category>(), It.IsAny<long>()))
                     .Throws(new Exception());
 
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
-                IActionResult result = controller.Put(this.id, this.budget);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Put(this.id, this.category);
                 ObjectResult objectResult = result as ObjectResult;
 
                 // Assert.
                 Assert.IsNotNull(objectResult, "An object result should have been returned.");
                 Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
-                string expectedMessage = "There was an error saving the budget.";
+                string expectedMessage = "There was an error saving the category.";
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
             }
 
@@ -529,12 +529,12 @@ namespace Checkbook.Api.Tests.Controllers
             public void AddsUserIdToEntity()
             {
                 // Act.
-                BudgetsController controller = new BudgetsController(this.mockBudgetsRepository.Object);
-                IActionResult result = controller.Put(this.id, this.budget);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Put(this.id, this.category);
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                this.mockBudgetsRepository.Verify(m => m.Save(It.Is<Budget>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
+                this.mockCategoriesRepository.Verify(m => m.Save(It.Is<Category>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
             }
         }
     }

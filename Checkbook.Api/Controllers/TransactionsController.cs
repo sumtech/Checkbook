@@ -108,6 +108,8 @@ namespace Checkbook.Api.Controllers
                 return this.BadRequest("A transaction must be passed in for it to be saved.");
             }
 
+            transaction.UserId = userId;
+
             Transaction savedTransaction;
             try
             {
@@ -144,6 +146,8 @@ namespace Checkbook.Api.Controllers
             {
                 return this.BadRequest("The transaction ID values did not match.");
             }
+
+            transaction.UserId = userId;
 
             Transaction savedTransaction;
             try

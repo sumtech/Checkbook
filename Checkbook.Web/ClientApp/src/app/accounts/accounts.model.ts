@@ -4,6 +4,14 @@
  */
 export class Account {
     /**
+     * Constructor.
+     * @constructor
+     */
+    constructor() {
+        this.id = 0;
+    }
+
+    /**
      * The unique identifier for the account.
      */
     id: number;
@@ -12,6 +20,11 @@ export class Account {
      * The name of the account.
      */
     name: string;
+
+    /**
+     * Indicates whether this is a user account ("my" account).
+     */
+    isUserAccount: boolean;
 }
 
 /**

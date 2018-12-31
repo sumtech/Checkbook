@@ -386,6 +386,7 @@ namespace Checkbook.Api.Tests.Repositories
                 {
                     FromAccountId = 1,
                     ToAccountId = 2,
+                    UserId = 1,
                     Date = DateTime.Now,
                     Items = new List<TransactionItem>
                     {
@@ -501,6 +502,102 @@ namespace Checkbook.Api.Tests.Repositories
             }
 
             /// <summary>
+            /// Verifies exception when buedget has a zero user ID.
+            /// </summary>
+            [TestMethod]
+            public void ThrowsExceptionWhenTransactionWithZeroUserId()
+            {
+                // Arrange.
+                this.transaction.UserId = 0;
+                this.userId = 1;
+
+                // Act.
+                Exception caughtException = null;
+                try
+                {
+                    using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                    {
+                        TransactionsRepository repository = new TransactionsRepository(context);
+                        repository.Add(this.transaction, this.userId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    caughtException = ex;
+                }
+
+                // Assert.
+                Assert.IsNotNull(caughtException, "An exception should be thrown.");
+                Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
+                string exceptionMessage = "A transaction is expected to have a user ID.\r\nParameter name: transaction.UserId";
+                Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
+            }
+
+            /// <summary>
+            /// Verifies exception when zero user ID passed in.
+            /// </summary>
+            [TestMethod]
+            public void ThrowsExceptionWhenZeroUserIdPassedIn()
+            {
+                // Arrange.
+                this.transaction.UserId = 1;
+                this.userId = 0;
+
+                // Act.
+                Exception caughtException = null;
+                try
+                {
+                    using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                    {
+                        TransactionsRepository repository = new TransactionsRepository(context);
+                        repository.Add(this.transaction, this.userId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    caughtException = ex;
+                }
+
+                // Assert.
+                Assert.IsNotNull(caughtException, "An exception should be thrown.");
+                Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
+                string exceptionMessage = "A user ID is expected to be passed in.\r\nParameter name: userId";
+                Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
+            }
+
+            /// <summary>
+            /// Verifies exception when transaction user ID does not match the one passed in.
+            /// </summary>
+            [TestMethod]
+            public void ThrowsExceptionWhenTransactionWithMismatchedUserIds()
+            {
+                // Arrange.
+                this.transaction.UserId = 1;
+                this.userId = 2;
+
+                // Act.
+                Exception caughtException = null;
+                try
+                {
+                    using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                    {
+                        TransactionsRepository repository = new TransactionsRepository(context);
+                        repository.Add(this.transaction, this.userId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    caughtException = ex;
+                }
+
+                // Assert.
+                Assert.IsNotNull(caughtException, "An exception should be thrown.");
+                Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
+                string exceptionMessage = "A user ID is expected to match the passed in user ID for a transaction.\r\nParameter name: transaction.UserId";
+                Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
+            }
+
+            /// <summary>
             /// Verifies exception thrown when transaction has account for another user.
             /// </summary>
             [TestMethod]
@@ -509,6 +606,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Arrange.
                 this.transaction.FromAccountId = 1;
                 this.transaction.ToAccountId = 2;
+                this.transaction.UserId = 2;
                 this.userId = 2;
 
                 // Act.
@@ -542,6 +640,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Arrange.
                 this.transaction.FromAccountId = 2;
                 this.transaction.ToAccountId = 1;
+                this.transaction.UserId = 2;
                 this.userId = 2;
 
                 // Act.
@@ -634,6 +733,7 @@ namespace Checkbook.Api.Tests.Repositories
                     Id = 2,
                     FromAccountId = 1,
                     ToAccountId = 3,
+                    UserId = 1,
                     Date = Convert.ToDateTime("1/1/2000"),
                     Items = new List<TransactionItem>
                     {
@@ -957,6 +1057,102 @@ namespace Checkbook.Api.Tests.Repositories
             }
 
             /// <summary>
+            /// Verifies exception when transaction has a zero user ID.
+            /// </summary>
+            [TestMethod]
+            public void ThrowsExceptionWhenTransactionWithZeroUserId()
+            {
+                // Arrange.
+                this.transaction.UserId = 0;
+                this.userId = 1;
+
+                // Act.
+                Exception caughtException = null;
+                try
+                {
+                    using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                    {
+                        TransactionsRepository repository = new TransactionsRepository(context);
+                        repository.Save(this.transaction, this.userId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    caughtException = ex;
+                }
+
+                // Assert.
+                Assert.IsNotNull(caughtException, "An exception should be thrown.");
+                Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
+                string exceptionMessage = "A transaction is expected to have a user ID.\r\nParameter name: transaction.UserId";
+                Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
+            }
+
+            /// <summary>
+            /// Verifies exception when null user ID passed in.
+            /// </summary>
+            [TestMethod]
+            public void ThrowsExceptionWhenZeroUserIdPasedIn()
+            {
+                // Arrange.
+                this.transaction.UserId = 1;
+                this.userId = 0;
+
+                // Act.
+                Exception caughtException = null;
+                try
+                {
+                    using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                    {
+                        TransactionsRepository repository = new TransactionsRepository(context);
+                        repository.Save(this.transaction, this.userId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    caughtException = ex;
+                }
+
+                // Assert.
+                Assert.IsNotNull(caughtException, "An exception should be thrown.");
+                Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
+                string exceptionMessage = "A user ID is expected to be passed in.\r\nParameter name: userId";
+                Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
+            }
+
+            /// <summary>
+            /// Verifies exception when transaction user ID does not match the one passed in.
+            /// </summary>
+            [TestMethod]
+            public void ThrowsExceptionWhenTransactionWithMismatchedUserIds()
+            {
+                // Arrange.
+                this.transaction.UserId = 1;
+                this.userId = 2;
+
+                // Act.
+                Exception caughtException = null;
+                try
+                {
+                    using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                    {
+                        TransactionsRepository repository = new TransactionsRepository(context);
+                        repository.Save(this.transaction, this.userId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    caughtException = ex;
+                }
+
+                // Assert.
+                Assert.IsNotNull(caughtException, "An exception should be thrown.");
+                Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
+                string exceptionMessage = "A user ID is expected to match the passed in user ID for a transaction.\r\nParameter name: transaction.UserId";
+                Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
+            }
+
+            /// <summary>
             /// Verifies exception thrown when transaction has account for another user.
             /// </summary>
             [TestMethod]
@@ -965,6 +1161,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Arrange.
                 this.transaction.FromAccountId = 1;
                 this.transaction.ToAccountId = 2;
+                this.transaction.UserId = 2;
                 this.userId = 2;
 
                 // Act.
@@ -998,6 +1195,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Arrange.
                 this.transaction.FromAccountId = 2;
                 this.transaction.ToAccountId = 1;
+                this.transaction.UserId = 2;
                 this.userId = 2;
 
                 // Act.
@@ -1062,6 +1260,7 @@ namespace Checkbook.Api.Tests.Repositories
             {
                 // Arrange.
                 this.transaction.FromAccountId = 4;
+                this.transaction.UserId = 2;
                 this.userId = 2;
 
                 // Act.

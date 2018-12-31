@@ -28,7 +28,7 @@ namespace Checkbook.Api.Controllers
         }
 
         /// <summary>
-        /// Gets the list of all bank budgets or the user.
+        /// Gets the list of all budgets for the user.
         /// </summary>
         /// <returns>The list of budgets.</returns>
         [HttpGet("api/budgets")]
@@ -85,6 +85,78 @@ namespace Checkbook.Api.Controllers
             }
 
             return this.Ok(budget);
+        }
+
+        /// <summary>
+        /// Adds a budget.
+        /// </summary>
+        /// <param name="budget">The budget information.</param>
+        /// <returns>The saved budget.</returns>
+        [HttpPost("api/budgets")]
+        [ProducesResponseType(typeof(List<Budget>), 200)]
+        [ProducesResponseType(typeof(string), 500)]
+        [ProducesResponseType(404)]
+        public IActionResult Post([FromBody] Budget budget)
+        {
+            long userId = 1;
+
+            if (budget == null)
+            {
+                return this.BadRequest("A budget must be passed in for it to be saved.");
+            }
+
+            budget.UserId = userId;
+
+            Budget savedBudget;
+            try
+            {
+                savedBudget = this.budgetsRepository.Add(budget, userId);
+            }
+            catch
+            {
+                return this.StatusCode(500, "There was an error saving the budget.");
+            }
+
+            return this.Ok(savedBudget);
+        }
+
+        /// <summary>
+        /// Updates a budget.
+        /// </summary>
+        /// <param name="budgetId">The unique ID for the budget.</param>
+        /// <param name="budget">The budget information.</param>
+        /// <returns>The updated budget.</returns>
+        [HttpPut("api/budgets/{budgetId:long}")]
+        [ProducesResponseType(typeof(List<Budget>), 200)]
+        [ProducesResponseType(typeof(string), 500)]
+        [ProducesResponseType(404)]
+        public IActionResult Put(long budgetId, [FromBody] Budget budget)
+        {
+            long userId = 1;
+
+            if (budget == null)
+            {
+                return this.BadRequest("A budget must be passed in for it to be saved.");
+            }
+
+            if (budget.Id != budgetId)
+            {
+                return this.BadRequest("The budget ID values did not match.");
+            }
+
+            budget.UserId = userId;
+
+            Budget savedBudget;
+            try
+            {
+                savedBudget = this.budgetsRepository.Save(budget, userId);
+            }
+            catch
+            {
+                return this.StatusCode(500, "There was an error saving the budget.");
+            }
+
+            return this.Ok(savedBudget);
         }
     }
 }

@@ -88,6 +88,21 @@ namespace Checkbook.Api.Repositories
             }
 
             // Verify the user information is valid.
+            if (userId == 0)
+            {
+                throw new ArgumentException("A user ID is expected to be passed in.", "userId");
+            }
+
+            if (transaction.UserId == 0)
+            {
+                throw new ArgumentException("A transaction is expected to have a user ID.", "transaction.UserId");
+            }
+
+            if (transaction.UserId != userId)
+            {
+                throw new ArgumentException("A user ID is expected to match the passed in user ID for a transaction.", "transaction.UserId");
+            }
+
             Account fromAccount = this.context.Accounts.AsNoTracking().SingleOrDefault(a => a.Id == transaction.FromAccountId);
             if (fromAccount == null || (fromAccount.IsUserAccount && fromAccount.UserId != userId))
             {
@@ -127,6 +142,21 @@ namespace Checkbook.Api.Repositories
             }
 
             // Verify the user information is valid.
+            if (userId == 0)
+            {
+                throw new ArgumentException("A user ID is expected to be passed in.", "userId");
+            }
+
+            if (transaction.UserId == 0)
+            {
+                throw new ArgumentException("A transaction is expected to have a user ID.", "transaction.UserId");
+            }
+
+            if (transaction.UserId != userId)
+            {
+                throw new ArgumentException("A user ID is expected to match the passed in user ID for a transaction.", "transaction.UserId");
+            }
+
             Account fromAccount = this.context.Accounts.AsNoTracking().SingleOrDefault(a => a.Id == transaction.FromAccountId);
             if (fromAccount == null || (fromAccount.IsUserAccount && fromAccount.UserId != userId))
             {

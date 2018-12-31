@@ -484,38 +484,6 @@ namespace Checkbook.Api.Tests.Repositories
                 string exceptionMessage = "The user ID did not match for the bank account.\r\nParameter name: userId";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
-
-            /// <summary>
-            /// Verifies exception when user ID passed in for a merchant account.
-            /// </summary>
-            [TestMethod]
-            public void ThrowsExceptionWhenUserIdPassedInForMerchantAccount()
-            {
-                // Arrange.
-                this.accountId = 2;
-                this.userId = 1;
-
-                // Act.
-                Exception caughtException = null;
-                try
-                {
-                    using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
-                    {
-                        AccountsRepository repository = new AccountsRepository(context);
-                        repository.Get(this.accountId, this.userId);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    caughtException = ex;
-                }
-
-                // Assert.
-                Assert.IsNotNull(caughtException, "An exception should be thrown.");
-                Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "An argument exception should be thrown.");
-                string exceptionMessage = "The user ID was not expected for a merchant account.\r\nParameter name: userId";
-                Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
-            }
         }
 
         /// <summary>
@@ -741,7 +709,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
-                string exceptionMessage = "A user ID is expected to be passed in for a bank account.\r\nParameter name: userId";
+                string exceptionMessage = "A user ID is expected to be passed in for an account.\r\nParameter name: userId";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
 
@@ -774,7 +742,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
-                string exceptionMessage = "A user ID is expected to be passed in for a bank account.\r\nParameter name: userId";
+                string exceptionMessage = "A user ID is expected to be passed in for an account.\r\nParameter name: userId";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
 
@@ -820,7 +788,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Arrange.
                 this.account.IsUserAccount = false;
                 this.account.UserId = 1;
-                this.userId = null;
+                this.userId = 1;
 
                 // Act.
                 Exception caughtException = null;
@@ -845,15 +813,15 @@ namespace Checkbook.Api.Tests.Repositories
             }
 
             /// <summary>
-            /// Verifies exception when user ID passed in for a merchant account.
+            /// Verifies exception when null user ID passed in for a merchant account.
             /// </summary>
             [TestMethod]
-            public void ThrowsExceptionWhenNewMerchantWithUserIdPassedIn()
+            public void ThrowsExceptionWhenNewMerchantWithNullUserIdPasedIn()
             {
                 // Arrange.
                 this.account.IsUserAccount = false;
                 this.account.UserId = null;
-                this.userId = 1;
+                this.userId = null;
 
                 // Act.
                 Exception caughtException = null;
@@ -873,7 +841,40 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
-                string exceptionMessage = "A user ID is not expected to be passed in for a merchant account.\r\nParameter name: userId";
+                string exceptionMessage = "A user ID is expected to be passed in for an account.\r\nParameter name: userId";
+                Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
+            }
+
+            /// <summary>
+            /// Verifies exception when zero user ID passed in for a merchant account.
+            /// </summary>
+            [TestMethod]
+            public void ThrowsExceptionWhenNewMerchantWithZeroUserIdPassedIn()
+            {
+                // Arrange.
+                this.account.IsUserAccount = false;
+                this.account.UserId = null;
+                this.userId = 0;
+
+                // Act.
+                Exception caughtException = null;
+                try
+                {
+                    using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                    {
+                        AccountsRepository repository = new AccountsRepository(context);
+                        repository.Add(this.account, this.userId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    caughtException = ex;
+                }
+
+                // Assert.
+                Assert.IsNotNull(caughtException, "An exception should be thrown.");
+                Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
+                string exceptionMessage = "A user ID is expected to be passed in for an account.\r\nParameter name: userId";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
         }
@@ -1100,7 +1101,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
-                string exceptionMessage = "A user ID is expected to be passed in for a bank account.\r\nParameter name: userId";
+                string exceptionMessage = "A user ID is expected to be passed in for an account.\r\nParameter name: userId";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
 
@@ -1133,7 +1134,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
-                string exceptionMessage = "A user ID is expected to be passed in for a bank account.\r\nParameter name: userId";
+                string exceptionMessage = "A user ID is expected to be passed in for an account.\r\nParameter name: userId";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
 
@@ -1179,7 +1180,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Arrange.
                 this.account.IsUserAccount = false;
                 this.account.UserId = 1;
-                this.userId = null;
+                this.userId = 1;
 
                 // Act.
                 Exception caughtException = null;
@@ -1204,15 +1205,15 @@ namespace Checkbook.Api.Tests.Repositories
             }
 
             /// <summary>
-            /// Verifies exception when user ID passed in for a merchant account.
+            /// Verifies exception when null user ID passed in for a merchant account.
             /// </summary>
             [TestMethod]
-            public void ThrowsExceptionWhenNewMerchantWithUserIdPassedIn()
+            public void ThrowsExceptionWhenNewMerchantWithNullUserIdPasedIn()
             {
                 // Arrange.
                 this.account.IsUserAccount = false;
                 this.account.UserId = null;
-                this.userId = 1;
+                this.userId = null;
 
                 // Act.
                 Exception caughtException = null;
@@ -1232,7 +1233,40 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
-                string exceptionMessage = "A user ID is not expected to be passed in for a merchant account.\r\nParameter name: userId";
+                string exceptionMessage = "A user ID is expected to be passed in for an account.\r\nParameter name: userId";
+                Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
+            }
+
+            /// <summary>
+            /// Verifies exception when zero user ID passed in for a merchant account.
+            /// </summary>
+            [TestMethod]
+            public void ThrowsExceptionWhenNewMerchantWithZeroUserIdPassedIn()
+            {
+                // Arrange.
+                this.account.IsUserAccount = false;
+                this.account.UserId = null;
+                this.userId = 0;
+
+                // Act.
+                Exception caughtException = null;
+                try
+                {
+                    using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                    {
+                        AccountsRepository repository = new AccountsRepository(context);
+                        repository.Save(this.account, this.userId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    caughtException = ex;
+                }
+
+                // Assert.
+                Assert.IsNotNull(caughtException, "An exception should be thrown.");
+                Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
+                string exceptionMessage = "A user ID is expected to be passed in for an account.\r\nParameter name: userId";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
         }

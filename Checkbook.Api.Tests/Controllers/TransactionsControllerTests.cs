@@ -354,6 +354,21 @@ namespace Checkbook.Api.Tests.Controllers
                 string expectedMessage = "There was an error saving the transaction.";
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
             }
+
+            /// <summary>
+            /// Verifies the User ID gets added to the entity before using the repository.
+            /// </summary>
+            [TestMethod]
+            public void AddsUserIdToEntity()
+            {
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Post(this.transaction);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockTransactionsRepository.Verify(m => m.Add(It.Is<Transaction>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
+            }
         }
 
         /// <summary>
@@ -485,6 +500,21 @@ namespace Checkbook.Api.Tests.Controllers
                 Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
                 string expectedMessage = "There was an error saving the transaction.";
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
+            }
+
+            /// <summary>
+            /// Verifies the User ID gets added to the entity before using the repository.
+            /// </summary>
+            [TestMethod]
+            public void AddsUserIdToEntity()
+            {
+                // Act.
+                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.transaction);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockTransactionsRepository.Verify(m => m.Save(It.Is<Transaction>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
             }
         }
     }

@@ -126,6 +126,7 @@ namespace Checkbook.Api.Tests.Helpers
                 Id = 1,
                 FromAccountId = 1,
                 ToAccountId = 2,
+                UserId = 1,
                 Date = DateTime.Now,
                 Items = new List<TransactionItem>
                 {
@@ -148,6 +149,7 @@ namespace Checkbook.Api.Tests.Helpers
                 Id = 2,
                 FromAccountId = 1,
                 ToAccountId = 3,
+                UserId = 1,
                 Date = DateTime.Now,
                 Items = new List<TransactionItem>
                 {
@@ -170,6 +172,7 @@ namespace Checkbook.Api.Tests.Helpers
                 Id = 3,
                 FromAccountId = 4,
                 ToAccountId = 3,
+                UserId = 2,
                 Date = DateTime.Now,
                 Items = new List<TransactionItem>
                 {

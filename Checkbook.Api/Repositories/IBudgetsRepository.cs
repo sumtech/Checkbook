@@ -11,11 +11,19 @@ namespace Checkbook.Api.Repositories
     public interface IBudgetsRepository
     {
         /// <summary>
-        /// Gets the list of bank budgets.
+        /// Gets the list of budgets.
         /// </summary>
-        /// <param name="userId">The unique identifier cfor the current user.</param>
-        /// <returns>A list of bank budgets.</returns>
+        /// <param name="userId">The unique identifier for the current user.</param>
+        /// <returns>A list of budgets.</returns>
         IEnumerable<Budget> GetAll(long userId);
+
+        /// <summary>
+        /// Gets a specified budget record.
+        /// </summary>
+        /// <param name="budgetId">The unique identifier for the budget.</param>
+        /// <param name="userId">The unique identifier for the current user.</param>
+        /// <returns>The budget.</returns>
+        Budget Get(long budgetId, long userId);
 
         /// <summary>
         /// Add a new budget to the data store.
@@ -26,11 +34,11 @@ namespace Checkbook.Api.Repositories
         Budget Add(Budget budget, long userId);
 
         /// <summary>
-        /// Gets a specified budget record.
+        /// Saves updates to a budget.
         /// </summary>
-        /// <param name="budgetId">The unique identifier for the budget.</param>
+        /// <param name="budget">The budget to be saved.</param>
         /// <param name="userId">The unique identifier for the current user.</param>
-        /// <returns>The budget.</returns>
-        Budget Get(long budgetId, long userId);
+        /// <returns>The saved budget information.</returns>
+        Budget Save(Budget budget, long userId);
     }
 }

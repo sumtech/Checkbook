@@ -39,5 +39,13 @@ namespace Checkbook.Api.Repositories
         /// <param name="userId">The unique identifier for the current user.</param>
         /// <returns>The saved account with the updated identifier.</returns>
         Account Add(Account account, long? userId);
+
+        /// <summary>
+        /// Saves updates to an account.
+        /// </summary>
+        /// <param name="account">The account to be saved.</param>
+        /// <param name="userId">The unique identifier for the current user.</param>
+        /// <returns>The saved account information.</returns>
+        Account Save(Account account, long? userId);
     }
 }

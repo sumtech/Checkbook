@@ -13,6 +13,9 @@ export class TransactionsListComponent implements OnInit {
      */
     public transactions: Transaction[];
 
+    /**
+     * The columns to display in the list.
+     */
     public columnsToDisplay: string[] = ['id', 'date', 'from', 'to', 'amount', 'actions'];
 
     /**

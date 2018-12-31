@@ -25,7 +25,7 @@ export class TransactionsService {
     constructor(
         private http: HttpClient,
     ) {
-        let baseApiUrl: string = 'http://localhost:11111/api/';
+        const baseApiUrl = 'http://localhost:11111/api/';
         this.baseApiUrl = baseApiUrl + 'transactions/';
     }
 
@@ -34,7 +34,7 @@ export class TransactionsService {
      * @returns             An observable list of transactions.
      */
     public getAll(): Observable<Transaction[]> {
-        let url: string = this.baseApiUrl;
+        const url: string = this.baseApiUrl;
         return this.http.get<Transaction[]>(url);
     }
 
@@ -44,7 +44,7 @@ export class TransactionsService {
      * @returns             An observable transaction.
      */
     public get(id: string): Observable<Transaction> {
-        let url: string = this.baseApiUrl + encodeURIComponent(id) + '/';
+        const url: string = this.baseApiUrl + encodeURIComponent(id) + '/';
         return this.http.get<Transaction>(url);
     }
 

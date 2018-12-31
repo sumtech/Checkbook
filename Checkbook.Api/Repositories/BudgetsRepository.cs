@@ -29,10 +29,10 @@ namespace Checkbook.Api.Repositories
         }
 
         /// <summary>
-        /// Gets the list of bank budgets.
+        /// Gets the list of budgets.
         /// </summary>
-        /// <param name="userId">The unique identifier cfor the current user.</param>
-        /// <returns>A list of bank budgets.</returns>
+        /// <param name="userId">The unique identifier for the current user.</param>
+        /// <returns>A list of budgets.</returns>
         public IEnumerable<Budget> GetAll(long userId)
         {
             return this.context.Budgets
