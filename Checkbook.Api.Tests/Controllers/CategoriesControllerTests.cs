@@ -12,19 +12,14 @@ namespace Checkbook.Api.Tests.Controllers
     using Moq;
 
     /// <summary>
-    /// Tests for the <see cref="TransactionsController"/> class.
+    /// Tests for the <see cref="CategoriesController"/> class.
     /// </summary>
-    public class TransactionsControllerTests
+    public class CategoriesControllerTests
     {
         /// <summary>
-        /// The user ID.
+        /// The mock implementation of the categories repository.
         /// </summary>
-        private long userId = 1;
-
-        /// <summary>
-        /// The mock implementation of the transactions repository.
-        /// </summary>
-        private Mock<ITransactionsRepository> mockTransactionsRepository;
+        private Mock<ICategoriesRepository> mockCategoriesRepository;
 
         /// <summary>
         /// Initializes the tests for the class.
@@ -33,19 +28,24 @@ namespace Checkbook.Api.Tests.Controllers
         public virtual void Initialize()
         {
             // Initialize the mock object(s).
-            this.mockTransactionsRepository = new Mock<ITransactionsRepository>();
+            this.mockCategoriesRepository = new Mock<ICategoriesRepository>();
         }
 
         /// <summary>
         /// Tests for the parameterless Get() method.
         /// </summary>
         [TestClass]
-        public class GetMethod : TransactionsControllerTests
+        public class GetMethod : CategoriesControllerTests
         {
+            /// <summary>
+            /// The user ID.
+            /// </summary>
+            private long userId;
+
             /// <summary>
             /// The stub repository response.
             /// </summary>
-            private List<Transaction> stubTransactions;
+            private List<Category> stubCategories;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -55,11 +55,13 @@ namespace Checkbook.Api.Tests.Controllers
             {
                 base.Initialize();
 
+                this.userId = 1;
+
                 // Initialize the mock repository method.
-                this.stubTransactions = new List<Transaction>();
-                this.mockTransactionsRepository
+                this.stubCategories = new List<Category>();
+                this.mockCategoriesRepository
                     .Setup(m => m.GetAll(It.IsAny<long>()))
-                    .Returns(this.stubTransactions);
+                    .Returns(this.stubCategories);
             }
 
             /// <summary>
@@ -69,17 +71,17 @@ namespace Checkbook.Api.Tests.Controllers
             public void ReturnsRepositoryResult()
             {
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
                 IActionResult result = controller.Get();
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                this.mockTransactionsRepository.Verify(m => m.GetAll(1), Times.Once, "The transactions should have been requested from the repository.");
-                this.mockTransactionsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.Verify(m => m.GetAll(this.userId), Times.Once, "The categories should have been requested from the repository.");
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
-                Assert.AreEqual(this.stubTransactions, okResult.Value, "The result from the repository should have been returned.");
+                Assert.AreEqual(this.stubCategories, okResult.Value, "The result from the repository should have been returned.");
             }
 
             /// <summary>
@@ -89,23 +91,23 @@ namespace Checkbook.Api.Tests.Controllers
             public void ReturnsAnEmptyListWhenRepositoryReturnsNull()
             {
                 // Arrange.
-                this.stubTransactions = null;
-                this.mockTransactionsRepository
-                    .Setup(m => m.GetAll(this.userId))
-                    .Returns(this.stubTransactions);
+                this.stubCategories = null;
+                this.mockCategoriesRepository
+                    .Setup(m => m.GetAll(It.IsAny<long>()))
+                    .Returns(this.stubCategories);
 
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
                 IActionResult result = controller.Get();
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                this.mockTransactionsRepository.Verify(m => m.GetAll(this.userId), Times.Once, "The transactions should have been requested from the repository.");
-                this.mockTransactionsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.Verify(m => m.GetAll(this.userId), Times.Once, "The categories should have been requested from the repository.");
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
-                Assert.AreEqual(0, (okResult.Value as List<Transaction>).Count, "An empty list should be the result.");
+                Assert.AreEqual(0, (okResult.Value as List<Category>).Count, "An empty list should be the result.");
             }
 
             /// <summary>
@@ -115,19 +117,19 @@ namespace Checkbook.Api.Tests.Controllers
             public void HandlesGeneralException()
             {
                 // Arrange.
-                this.mockTransactionsRepository
+                this.mockCategoriesRepository
                     .Setup(m => m.GetAll(It.IsAny<long>()))
                     .Throws(new Exception());
 
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
                 IActionResult result = controller.Get();
                 ObjectResult objectResult = result as ObjectResult;
 
                 // Assert.
                 Assert.IsNotNull(objectResult, "An object result should have been returned.");
                 Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
-                string expectedMessage = "There was an error getting the transactions.";
+                string expectedMessage = "There was an error getting the categories.";
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
             }
         }
@@ -136,17 +138,22 @@ namespace Checkbook.Api.Tests.Controllers
         /// Tests for the Get() method that takes in an ID value.
         /// </summary>
         [TestClass]
-        public class GetMethod_Id : TransactionsControllerTests
+        public class GetMethod_Id : CategoriesControllerTests
         {
             /// <summary>
-            /// The transaction ID used as an input.
+            /// The user ID.
             /// </summary>
-            private long transactionId;
+            private long userId;
+
+            /// <summary>
+            /// The ID used as an input.
+            /// </summary>
+            private long id;
 
             /// <summary>
             /// The stub repository response.
             /// </summary>
-            private Transaction stubTransaction;
+            private Category stubCategory;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -157,13 +164,14 @@ namespace Checkbook.Api.Tests.Controllers
                 base.Initialize();
 
                 // Initialize the input(s).
-                this.transactionId = 7;
+                this.userId = 1;
+                this.id = 7;
 
                 // Initialize the mock repository method.
-                this.stubTransaction = new Transaction();
-                this.mockTransactionsRepository
+                this.stubCategory = new Category();
+                this.mockCategoriesRepository
                     .Setup(m => m.Get(It.IsAny<long>(), It.IsAny<long>()))
-                    .Returns(this.stubTransaction);
+                    .Returns(this.stubCategory);
             }
 
             /// <summary>
@@ -173,39 +181,39 @@ namespace Checkbook.Api.Tests.Controllers
             public void ReturnsRepositoryResult()
             {
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Get(transactionId);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Get(this.id);
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                mockTransactionsRepository.Verify(m => m.Get(this.transactionId, this.userId), Times.Once, "The transactions should have been requested from the repository.");
-                mockTransactionsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.Verify(m => m.Get(this.id, this.userId), Times.Once, "The categories should have been requested from the repository.");
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
-                Assert.AreEqual(this.stubTransaction, okResult.Value, "The result from the repository should have been returned.");
+                Assert.AreEqual(this.stubCategory, okResult.Value, "The result from the repository should have been returned.");
             }
 
             /// <summary>
-            /// Verifies the result from the repository is retrieved correctly.
+            /// Verifies an empty list is returned when the repository returns null.
             /// </summary>
             [TestMethod]
             public void ReturnsNotFoundWhenRepositoryReturnsNull()
             {
                 // Arrange.
-                this.stubTransaction = null;
-                this.mockTransactionsRepository
+                this.stubCategory = null;
+                this.mockCategoriesRepository
                     .Setup(m => m.Get(It.IsAny<long>(), It.IsAny<long>()))
-                    .Returns(this.stubTransaction);
+                    .Returns(this.stubCategory);
 
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Get(transactionId);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Get(this.id);
                 NotFoundResult notFoundResult = result as NotFoundResult;
 
                 // Assert.
-                mockTransactionsRepository.Verify(m => m.Get(this.transactionId, this.userId), Times.Once, "The transaction should have been requested from the repository.");
-                mockTransactionsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.Verify(m => m.Get(this.id, this.userId), Times.Once, "The category should have been requested from the repository.");
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(notFoundResult, "A Not Found response should have been returned.");
                 Assert.AreEqual(404, notFoundResult.StatusCode, "The status code from the response should have been 404.");
@@ -218,13 +226,13 @@ namespace Checkbook.Api.Tests.Controllers
             public void HandlesNotFound()
             {
                 // Arrange.
-                this.mockTransactionsRepository
+                this.mockCategoriesRepository
                     .Setup(m => m.Get(It.IsAny<long>(), It.IsAny<long>()))
-                    .Returns<Transaction>(null);
+                    .Returns<Category>(null);
 
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Get(transactionId);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Get(this.id);
                 NotFoundResult notFoundResult = result as NotFoundResult;
 
                 // Assert.
@@ -239,19 +247,19 @@ namespace Checkbook.Api.Tests.Controllers
             public void HandlesGeneralException()
             {
                 // Arrange.
-                this.mockTransactionsRepository
+                this.mockCategoriesRepository
                     .Setup(m => m.Get(It.IsAny<long>(), It.IsAny<long>()))
                     .Throws(new Exception());
 
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Get(transactionId);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Get(this.id);
                 ObjectResult objectResult = result as ObjectResult;
 
                 // Assert.
                 Assert.IsNotNull(objectResult, "An object result should have been returned.");
                 Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
-                string expectedMessage = "There was an error getting the transaction.";
+                string expectedMessage = "There was an error getting the category.";
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
             }
         }
@@ -260,17 +268,22 @@ namespace Checkbook.Api.Tests.Controllers
         /// Tests for the Post() method.
         /// </summary>
         [TestClass]
-        public class PostMethod : TransactionsControllerTests
+        public class PostMethod : CategoriesControllerTests
         {
             /// <summary>
-            /// The transaction used as an input.
+            /// The category used as an input.
             /// </summary>
-            private Transaction transaction;
+            private Category category;
 
             /// <summary>
-            /// Stub of the transaction returned by the repository.
+            /// The user ID used as an input.
             /// </summary>
-            private Transaction stubTransaction;
+            private long userId;
+
+            /// <summary>
+            /// Stub of the category returned by the repository.
+            /// </summary>
+            private Category stubCategory;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -280,13 +293,14 @@ namespace Checkbook.Api.Tests.Controllers
             {
                 base.Initialize();
 
-                this.transaction = new Transaction();
+                this.userId = 1;
+                this.category = new Category();
 
                 // Initialize the mock repository method.
-                this.stubTransaction = new Transaction();
-                this.mockTransactionsRepository
-                    .Setup(m => m.Add(It.IsAny<Transaction>(), It.IsAny<long>()))
-                    .Returns(this.stubTransaction);
+                this.stubCategory = new Category();
+                this.mockCategoriesRepository
+                    .Setup(m => m.Add(It.IsAny<Category>(), It.IsAny<long>()))
+                    .Returns(this.stubCategory);
             }
 
             /// <summary>
@@ -296,39 +310,39 @@ namespace Checkbook.Api.Tests.Controllers
             public void ReturnsRepositoryResult()
             {
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Post(this.transaction);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Post(this.category);
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                this.mockTransactionsRepository.Verify(m => m.Add(this.transaction, this.userId), Times.Once, "The add method should have been called.");
-                this.mockTransactionsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.Verify(m => m.Add(this.category, this.userId), Times.Once, "The add method should have been called.");
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
-                Assert.AreEqual(this.stubTransaction, okResult.Value, "The result from the repository should have been returned.");
+                Assert.AreEqual(this.stubCategory, okResult.Value, "The result from the repository should have been returned.");
             }
 
             /// <summary>
             /// Verifies the result from the repository is retrieved correctly.
             /// </summary>
             [TestMethod]
-            public void ReturnsBadRequestErrorWhenTransactionNull()
+            public void ReturnsBadRequestErrorWhenCategoryNull()
             {
                 // Arrange.
-                this.transaction = null;
+                this.category = null;
 
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Post(this.transaction);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Post(this.category);
                 BadRequestObjectResult badRequestResult = result as BadRequestObjectResult;
 
                 // Assert.
-                this.mockTransactionsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(badRequestResult, "A bad request response should have been returned.");
                 Assert.AreEqual(400, badRequestResult.StatusCode, "The status code from the response should have been 405.");
-                string expectedMessage = "A transaction must be passed in for it to be saved.";
+                string expectedMessage = "A category must be passed in for it to be saved.";
                 Assert.AreEqual(expectedMessage, badRequestResult.Value, "The error message should have been the result.");
             }
 
@@ -339,19 +353,19 @@ namespace Checkbook.Api.Tests.Controllers
             public void HandlesGeneralException()
             {
                 // Arrange.
-                this.mockTransactionsRepository
-                    .Setup(m => m.Add(It.IsAny<Transaction>(), It.IsAny<long>()))
+                this.mockCategoriesRepository
+                    .Setup(m => m.Add(It.IsAny<Category>(), It.IsAny<long>()))
                     .Throws(new Exception());
 
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Post(this.transaction);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Post(this.category);
                 ObjectResult objectResult = result as ObjectResult;
 
                 // Assert.
                 Assert.IsNotNull(objectResult, "An object result should have been returned.");
                 Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
-                string expectedMessage = "There was an error saving the transaction.";
+                string expectedMessage = "There was an error saving the category.";
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
             }
 
@@ -362,12 +376,12 @@ namespace Checkbook.Api.Tests.Controllers
             public void AddsUserIdToEntity()
             {
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Post(this.transaction);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Post(this.category);
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                this.mockTransactionsRepository.Verify(m => m.Add(It.Is<Transaction>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
+                this.mockCategoriesRepository.Verify(m => m.Add(It.Is<Category>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
             }
         }
 
@@ -375,7 +389,7 @@ namespace Checkbook.Api.Tests.Controllers
         /// Tests for the Put() method.
         /// </summary>
         [TestClass]
-        public class PutMethod : TransactionsControllerTests
+        public class PutMethod : CategoriesControllerTests
         {
             /// <summary>
             /// The id used as an input.
@@ -383,14 +397,19 @@ namespace Checkbook.Api.Tests.Controllers
             private long id;
 
             /// <summary>
-            /// The transaction used as an input.
+            /// The user ID used as an input.
             /// </summary>
-            private Transaction transaction;
+            private long userId;
 
             /// <summary>
-            /// Stub of the transaction returned by the repository.
+            /// The category used as an input.
             /// </summary>
-            private Transaction stubTransaction;
+            private Category category;
+
+            /// <summary>
+            /// Stub of the category returned by the repository.
+            /// </summary>
+            private Category stubCategory;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -401,16 +420,17 @@ namespace Checkbook.Api.Tests.Controllers
                 base.Initialize();
 
                 this.id = 7;
-                this.transaction = new Transaction
+                this.category = new Category
                 {
-                    Id = this.id,
+                    Id = id,
                 };
+                this.userId = 1;
 
                 // Initialize the mock repository method.
-                this.stubTransaction = new Transaction();
-                this.mockTransactionsRepository
-                    .Setup(m => m.Save(It.IsAny<Transaction>(), It.IsAny<long>()))
-                    .Returns(this.stubTransaction);
+                this.stubCategory = new Category();
+                this.mockCategoriesRepository
+                    .Setup(m => m.Save(It.IsAny<Category>(), It.IsAny<long>()))
+                    .Returns(this.stubCategory);
             }
 
             /// <summary>
@@ -420,39 +440,39 @@ namespace Checkbook.Api.Tests.Controllers
             public void ReturnsRepositoryResult()
             {
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Put(this.id, this.transaction);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Put(this.id, this.category);
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                this.mockTransactionsRepository.Verify(m => m.Save(this.transaction, this.userId), Times.Once, "The save method should have been called.");
-                this.mockTransactionsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.Verify(m => m.Save(this.category, this.userId), Times.Once, "The save method should have been called.");
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(okResult, "An OK response should have been returned.");
                 Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
-                Assert.AreEqual(this.stubTransaction, okResult.Value, "The result from the repository should have been returned.");
+                Assert.AreEqual(this.stubCategory, okResult.Value, "The result from the repository should have been returned.");
             }
 
             /// <summary>
             /// Verifies the result from the repository is retrieved correctly.
             /// </summary>
             [TestMethod]
-            public void ReturnsBadRequestErrorWhenTransactionNull()
+            public void ReturnsBadRequestErrorWhenCategoryNull()
             {
                 // Arrange.
-                this.transaction = null;
+                this.category = null;
 
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Put(this.id, this.transaction);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Put(this.id, this.category);
                 BadRequestObjectResult badRequestResult = result as BadRequestObjectResult;
 
                 // Assert.
-                this.mockTransactionsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(badRequestResult, "A bad request response should have been returned.");
                 Assert.AreEqual(400, badRequestResult.StatusCode, "The status code from the response should have been 405.");
-                string expectedMessage = "A transaction must be passed in for it to be saved.";
+                string expectedMessage = "A category must be passed in for it to be saved.";
                 Assert.AreEqual(expectedMessage, badRequestResult.Value, "The error message should have been the result.");
             }
 
@@ -460,22 +480,22 @@ namespace Checkbook.Api.Tests.Controllers
             /// Verifies the result from the repository is retrieved correctly.
             /// </summary>
             [TestMethod]
-            public void ReturnsBadRequestErrorWhenTransactionIdsMismatch()
+            public void ReturnsBadRequestErrorWhenCategoryIdsMismatch()
             {
                 // Arrange.
                 this.id = this.id + 2;
 
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Put(this.id, this.transaction);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Put(this.id, this.category);
                 BadRequestObjectResult badRequestResult = result as BadRequestObjectResult;
 
                 // Assert.
-                this.mockTransactionsRepository.VerifyNoOtherCalls();
+                this.mockCategoriesRepository.VerifyNoOtherCalls();
 
                 Assert.IsNotNull(badRequestResult, "A bad request response should have been returned.");
                 Assert.AreEqual(400, badRequestResult.StatusCode, "The status code from the response should have been 405.");
-                string expectedMessage = "The transaction ID values did not match.";
+                string expectedMessage = "The category ID values did not match.";
                 Assert.AreEqual(expectedMessage, badRequestResult.Value, "The error message should have been the result.");
             }
 
@@ -486,19 +506,19 @@ namespace Checkbook.Api.Tests.Controllers
             public void HandlesGeneralException()
             {
                 // Arrange.
-                this.mockTransactionsRepository
-                    .Setup(m => m.Save(It.IsAny<Transaction>(), It.IsAny<long>()))
+                this.mockCategoriesRepository
+                    .Setup(m => m.Save(It.IsAny<Category>(), It.IsAny<long>()))
                     .Throws(new Exception());
 
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Put(this.id, this.transaction);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Put(this.id, this.category);
                 ObjectResult objectResult = result as ObjectResult;
 
                 // Assert.
                 Assert.IsNotNull(objectResult, "An object result should have been returned.");
                 Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
-                string expectedMessage = "There was an error saving the transaction.";
+                string expectedMessage = "There was an error saving the category.";
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
             }
 
@@ -509,12 +529,12 @@ namespace Checkbook.Api.Tests.Controllers
             public void AddsUserIdToEntity()
             {
                 // Act.
-                TransactionsController controller = new TransactionsController(this.mockTransactionsRepository.Object);
-                IActionResult result = controller.Put(this.id, this.transaction);
+                CategoriesController controller = new CategoriesController(this.mockCategoriesRepository.Object);
+                IActionResult result = controller.Put(this.id, this.category);
                 OkObjectResult okResult = result as OkObjectResult;
 
                 // Assert.
-                this.mockTransactionsRepository.Verify(m => m.Save(It.Is<Transaction>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
+                this.mockCategoriesRepository.Verify(m => m.Save(It.Is<Category>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
             }
         }
     }

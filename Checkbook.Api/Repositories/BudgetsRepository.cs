@@ -29,10 +29,10 @@ namespace Checkbook.Api.Repositories
         }
 
         /// <summary>
-        /// Gets the list of bank budgets.
+        /// Gets the list of budgets.
         /// </summary>
-        /// <param name="userId">The unique identifier cfor the current user.</param>
-        /// <returns>A list of bank budgets.</returns>
+        /// <param name="userId">The unique identifier for the current user.</param>
+        /// <returns>A list of budgets.</returns>
         public IEnumerable<Budget> GetAll(long userId)
         {
             return this.context.Budgets
@@ -40,6 +40,24 @@ namespace Checkbook.Api.Repositories
                 .Where(b => b.UserId == userId)
                 .OrderBy(b => b.Category.Name)
                     .ThenBy(b => b.Name)
+                .AsEnumerable();
+        }
+
+        /// <summary>
+        /// Gets the list of budgets and includes the totals for each budget.
+        /// </summary>
+        /// <param name="userId">The unique identifier for the current user.</param>
+        /// <returns>A list of budgets.</returns>
+        public IEnumerable<BudgetSummary> GetTotals(long userId)
+        {
+            return this.context.Budgets
+                .Include(b => b.Category)
+                .Include(b => b.TransactionItems)
+                .Where(b => b.UserId == userId)
+                .OrderBy(b => b.Category.Name)
+                    .ThenBy(b => b.Name)
+                .ToList()
+                .Select(b => new BudgetSummary(b))
                 .AsEnumerable();
         }
 
@@ -53,7 +71,7 @@ namespace Checkbook.Api.Repositories
         {
             if (userId == 0)
             {
-                throw new ArgumentException("", "userId");
+                throw new ArgumentException("A user ID is needed.", "userId");
             }
 
             Budget budget = this.context.Budgets

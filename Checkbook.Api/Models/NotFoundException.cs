@@ -1,4 +1,6 @@
-﻿namespace Checkbook.Api.Models
+﻿// Copyright (c) Palouse Coding Conglomerate. All Rights Reserved.
+
+namespace Checkbook.Api.Models
 {
     using System;
 

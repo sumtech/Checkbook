@@ -1,0 +1,24 @@
+<div>
+    <!-- Cancel -->
+    <a style="float:right;" [routerLink]="['/my-accounts']" *ngIf="account" mat-button color="primary">Cancel</a>
+
+    <!-- Heading -->
+    <h1>My Account</h1>
+
+    <form *ngIf="account" (ngSubmit)="onSubmit()" #accountForm="ngForm">
+
+        <!-- ID -->
+        <mat-form-field>
+            <input type="text" [value]="account.id" placeholder="Id" readonly matInput>
+            <input type="hidden" id="account-id" name="id" [value]="account.id" />
+        </mat-form-field>
+
+        <!-- Name -->
+        <mat-form-field>
+            <input type="text" name="name" placeholder="Name" matInput [(ngModel)]="account.name">
+        </mat-form-field>
+
+        <!-- Save -->
+        <button type="submit" mat-button color="primary" [disabled]="!accountForm.form.valid">Save</button>
+    </form>
+</div>

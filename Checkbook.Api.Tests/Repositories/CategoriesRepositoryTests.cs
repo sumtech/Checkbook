@@ -14,10 +14,10 @@ namespace Checkbook.Api.Tests.Repositories
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
-    /// Tests for the <see cref="BudgetsRepository"/> class.
+    /// Tests for the <see cref="CategoriesRepository"/> class.
     /// </summary>
     [TestClass]
-    public class BudgetsRepositoryTests
+    public class CategoriesRepositoryTests
     {
         /// <summary>
         /// The options for the test implementation of the database context.
@@ -68,7 +68,7 @@ namespace Checkbook.Api.Tests.Repositories
         /// Tests for the GetAll() method.
         /// </summary>
         [TestClass]
-        public class GetAllMethod : BudgetsRepositoryTests
+        public class GetAllMethod : CategoriesRepositoryTests
         {
             /// <summary>
             /// The user ID used as an input.
@@ -78,7 +78,7 @@ namespace Checkbook.Api.Tests.Repositories
             /// <summary>
             /// Stub data for the database set.
             /// </summary>
-            private List<Budget> entities;
+            private List<Category> entities;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -95,7 +95,7 @@ namespace Checkbook.Api.Tests.Repositories
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
                     DatabaseSeed.AddEntities(context);
-                    this.entities = ContextDataService.GetBudgets(context)
+                    this.entities = ContextDataService.GetCategories(context)
                         .Where(a => a.UserId == this.userId)
                         .ToList();
                 }
@@ -105,21 +105,21 @@ namespace Checkbook.Api.Tests.Repositories
             /// Verifies the entiies from the context are returned.
             /// </summary>
             [TestMethod]
-            public void ReturnsBudgetsFromContext()
+            public void ReturnsCategoriesFromContext()
             {
                 // Act.
-                List<Budget> actualList;
+                List<Category> actualList;
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
-                    BudgetsRepository repository = new BudgetsRepository(context);
+                    CategoriesRepository repository = new CategoriesRepository(context);
                     actualList = repository.GetAll(this.userId).ToList();
                 }
 
                 // Assert.
                 Assert.AreEqual(this.entities.Count(), actualList.Count(), "The entity count should match.");
 
-                Budget expected = this.entities.ElementAt(0);
-                Budget actual = actualList.ElementAt(0);
+                Category expected = this.entities.ElementAt(0);
+                Category actual = actualList.ElementAt(0);
                 string index = "first";
                 Assert.AreEqual(expected.Id, actual.Id, $"The ID for the {index} entity should match.");
                 Assert.AreEqual(expected.Name, actual.Name, $"The name for the {index} entity should match.");
@@ -130,29 +130,29 @@ namespace Checkbook.Api.Tests.Repositories
             /// Verifies the entiies from the context are returned.
             /// </summary>
             [TestMethod]
-            public void ReturnsBudgetsOnlyForTheUser()
+            public void ReturnsCategoriesOnlyForTheUser()
             {
                 // Act.
-                List<Budget> actualList;
+                List<Category> actualList;
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
-                    BudgetsRepository repository = new BudgetsRepository(context);
+                    CategoriesRepository repository = new CategoriesRepository(context);
                     actualList = repository.GetAll(this.userId).ToList();
                 }
 
                 // Assert.
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
-                    int numberOfBudgetUsers = context.Budgets
+                    int numberOfCategoryUsers = context.Categories
                         .GroupBy(a => a.UserId)
                         .Count();
-                    Assert.AreNotEqual(numberOfBudgetUsers, 0, "For the test to work there must be more than one user with budgets.");
-                    Assert.AreNotEqual(numberOfBudgetUsers, 1, "For the test to work there must be more than one user with budgets.");
+                    Assert.AreNotEqual(numberOfCategoryUsers, 0, "For the test to work there must be more than one user with categories.");
+                    Assert.AreNotEqual(numberOfCategoryUsers, 1, "For the test to work there must be more than one user with categories.");
                 }
 
-                foreach (Budget actual in actualList)
+                foreach (Category actual in actualList)
                 {
-                    Assert.AreEqual(this.userId, actual.UserId, "The user ID for each budget should match the input user ID.");
+                    Assert.AreEqual(this.userId, actual.UserId, "The user ID for each category should match the input user ID.");
                 }
             }
 
@@ -166,149 +166,11 @@ namespace Checkbook.Api.Tests.Repositories
                 this.userId = 123;
 
                 // Act.
-                List<Budget> actualList;
+                List<Category> actualList;
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
-                    BudgetsRepository repository = new BudgetsRepository(context);
+                    CategoriesRepository repository = new CategoriesRepository(context);
                     actualList = repository.GetAll(this.userId).ToList();
-                }
-
-                // Assert.
-                Assert.AreEqual(0, actualList.Count(), "An empty list should be returned.");
-            }
-        }
-
-        /// <summary>
-        /// Tests for the GetTotals() method.
-        /// </summary>
-        [TestClass]
-        public class GetTotalsMethod : BudgetsRepositoryTests
-        {
-            /// <summary>
-            /// The user ID used as an input.
-            /// </summary>
-            private long userId;
-
-            /// <summary>
-            /// Stub data for the database set.
-            /// </summary>
-            private List<Budget> entities;
-
-            /// <summary>
-            /// Initializes the tests for the method.
-            /// </summary>
-            [TestInitialize]
-            public override void Initialize()
-            {
-                base.Initialize();
-
-                // Initialize the inputs.
-                this.userId = 1;
-
-                // Initialize the database set.
-                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
-                {
-                    DatabaseSeed.AddEntities(context);
-                    this.entities = ContextDataService.GetBudgets(context)
-                        .Where(a => a.UserId == this.userId)
-                        .ToList();
-                }
-            }
-
-            /// <summary>
-            /// Verifies the entiies from the context are returned.
-            /// </summary>
-            [TestMethod]
-            public void ReturnsBudgetsFromContext()
-            {
-                // Act.
-                List<BudgetSummary> actualList;
-                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
-                {
-                    BudgetsRepository repository = new BudgetsRepository(context);
-                    actualList = repository.GetTotals(this.userId).ToList();
-                }
-
-                // Assert.
-                Assert.AreEqual(this.entities.Count(), actualList.Count(), "The entity count should match.");
-
-                BudgetSummary expected = new BudgetSummary(this.entities.ElementAt(0));
-                BudgetSummary actual = actualList.ElementAt(0);
-                string index = "first";
-                Assert.AreEqual(expected.Id, actual.Id, $"The ID for the {index} entity should match.");
-                Assert.AreEqual(expected.Name, actual.Name, $"The name for the {index} entity should match.");
-                Assert.AreEqual(expected.UserId, actual.UserId, $"The user ID for the {index} entity should match.");
-            }
-
-            /// <summary>
-            /// Verifies the totals from the context are returned.
-            /// </summary>
-            [TestMethod]
-            public void ReturnsBudgetTotalsFromContext()
-            {
-                // Act.
-                List<BudgetSummary> actualList;
-                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
-                {
-                    BudgetsRepository repository = new BudgetsRepository(context);
-                    actualList = repository.GetTotals(this.userId).ToList();
-                }
-
-                // Assert.
-                Assert.AreEqual(this.entities.Count(), actualList.Count(), "The entity count should match.");
-
-                BudgetSummary expected = new BudgetSummary(this.entities.ElementAt(0));
-                BudgetSummary actual = actualList.ElementAt(0);
-                string index = "first";
-                Assert.AreNotEqual(0, actual.Balance, "The current total should not be zero.");
-                Assert.AreEqual(expected.Balance, actual.Balance, $"The current total for the {index} entity should match.");
-            }
-
-            /// <summary>
-            /// Verifies the entiies from the context are returned.
-            /// </summary>
-            [TestMethod]
-            public void ReturnsBudgetsOnlyForTheUser()
-            {
-                // Act.
-                List<BudgetSummary> actualList;
-                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
-                {
-                    BudgetsRepository repository = new BudgetsRepository(context);
-                    actualList = repository.GetTotals(this.userId).ToList();
-                }
-
-                // Assert.
-                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
-                {
-                    int numberOfBudgetUsers = context.Budgets
-                        .GroupBy(a => a.UserId)
-                        .Count();
-                    Assert.AreNotEqual(numberOfBudgetUsers, 0, "For the test to work there must be more than one user with budgets.");
-                    Assert.AreNotEqual(numberOfBudgetUsers, 1, "For the test to work there must be more than one user with budgets.");
-                }
-
-                foreach (BudgetSummary actual in actualList)
-                {
-                    Assert.AreEqual(this.userId, actual.UserId, "The user ID for each budget should match the input user ID.");
-                }
-            }
-
-            /// <summary>
-            /// Verifies an empty list is returned when no records are found.
-            /// </summary>
-            [TestMethod]
-            public void ReturnsEmptyListWhenNoRecordsFound()
-            {
-                // Arrange.
-                this.userId = 123;
-
-                // Act.
-                List<BudgetSummary> actualList;
-                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
-                {
-                    BudgetsRepository repository = new BudgetsRepository(context);
-                    actualList = repository.GetTotals(this.userId).ToList();
                 }
 
                 // Assert.
@@ -320,12 +182,12 @@ namespace Checkbook.Api.Tests.Repositories
         /// Tests for the Get(id) method.
         /// </summary>
         [TestClass]
-        public class GetMethod : BudgetsRepositoryTests
+        public class GetMethod : CategoriesRepositoryTests
         {
             /// <summary>
-            /// The budget ID used as an input.
+            /// The category ID used as an input.
             /// </summary>
-            private long budgetId;
+            private long categoryId;
 
             /// <summary>
             /// The user ID used as an input.
@@ -335,7 +197,7 @@ namespace Checkbook.Api.Tests.Repositories
             /// <summary>
             /// Stub data for the database set.
             /// </summary>
-            private List<Budget> entities;
+            private List<Category> entities;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -349,30 +211,30 @@ namespace Checkbook.Api.Tests.Repositories
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
                     DatabaseSeed.AddEntities(context);
-                    this.entities = ContextDataService.GetBudgets(context);
+                    this.entities = ContextDataService.GetCategories(context);
                 }
             }
 
             /// <summary>
-            /// Verifies the correct budget from the context is returned.
+            /// Verifies the correct category from the context is returned.
             /// </summary>
             [TestMethod]
-            public void ReturnsBudgetFromContext()
+            public void ReturnsCategoryFromContext()
             {
                 // Arrange.
-                this.budgetId = 1;
+                this.categoryId = 1;
                 this.userId = 1;
 
                 // Act.
-                Budget actual;
+                Category actual;
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
-                    BudgetsRepository repository = new BudgetsRepository(context);
-                    actual = repository.Get(this.budgetId, this.userId);
+                    CategoriesRepository repository = new CategoriesRepository(context);
+                    actual = repository.Get(this.categoryId, this.userId);
                 }
 
                 // Assert.
-                Budget expected = this.entities.ElementAt(0);
+                Category expected = this.entities.ElementAt(0);
                 Assert.AreEqual(expected.Id, actual.Id, "The ID for the entity should match.");
                 Assert.AreEqual(expected.Name, actual.Name, "The name for the entity should match.");
                 Assert.AreEqual(expected.UserId, actual.UserId, "The user ID for the entity should match.");
@@ -385,7 +247,7 @@ namespace Checkbook.Api.Tests.Repositories
             public void ThrowsExceptionWhenNoRecordFoundForTheUser()
             {
                 // Arrange.
-                this.budgetId = 123;
+                this.categoryId = 123;
                 this.userId = 1;
 
                 // Act.
@@ -394,8 +256,8 @@ namespace Checkbook.Api.Tests.Repositories
                 {
                     using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                     {
-                        BudgetsRepository repository = new BudgetsRepository(context);
-                        repository.Get(this.budgetId, this.userId);
+                        CategoriesRepository repository = new CategoriesRepository(context);
+                        repository.Get(this.categoryId, this.userId);
                     }
                 }
                 catch (Exception ex)
@@ -406,18 +268,18 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(NotFoundException), "This should be an argument exception.");
-                string exceptionMessage = "The budget was not found.";
+                string exceptionMessage = "The category was not found.";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
 
             /// <summary>
-            /// Verifies exception when budget user ID does not match the one passed in.
+            /// Verifies exception when category user ID does not match the one passed in.
             /// </summary>
             [TestMethod]
             public void ThrowsExceptionWhenRecordFoundDoesNotBelongToTheUser()
             {
                 // Arrange.
-                this.budgetId = 1;
+                this.categoryId = 1;
                 this.userId = 2;
 
                 // Act.
@@ -426,8 +288,8 @@ namespace Checkbook.Api.Tests.Repositories
                 {
                     using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                     {
-                        BudgetsRepository repository = new BudgetsRepository(context);
-                        repository.Get(this.budgetId, this.userId);
+                        CategoriesRepository repository = new CategoriesRepository(context);
+                        repository.Get(this.categoryId, this.userId);
                     }
                 }
                 catch (Exception ex)
@@ -438,21 +300,21 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(NotFoundException), "This should be an argument exception.");
-                string exceptionMessage = "The budget was not found.";
+                string exceptionMessage = "The category was not found.";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
         }
 
         /// <summary>
-        /// Tests for the Add(budget) method.
+        /// Tests for the Add(category) method.
         /// </summary>
         [TestClass]
-        public class AddMethod : BudgetsRepositoryTests
+        public class AddMethod : CategoriesRepositoryTests
         {
             /// <summary>
-            /// The budget used as an input.
+            /// The category used as an input.
             /// </summary>
-            private Budget budget;
+            private Category category;
 
             /// <summary>
             /// The user ID used as an input.
@@ -462,7 +324,7 @@ namespace Checkbook.Api.Tests.Repositories
             /// <summary>
             /// Stub data for the database set.
             /// </summary>
-            private List<Budget> entities;
+            private List<Category> entities;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -474,18 +336,17 @@ namespace Checkbook.Api.Tests.Repositories
 
                 // Initialize the inputs.
                 this.userId = 1;
-                this.budget = new Budget
+                this.category = new Category
                 {
-                    Name = "Third Budget",
+                    Name = "Third Category",
                     UserId = this.userId,
-                    CategoryId = 1,
                 };
 
                 // Initialize the database set.
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
                     DatabaseSeed.AddEntities(context);
-                    this.entities = ContextDataService.GetBudgets(context);
+                    this.entities = ContextDataService.GetCategories(context);
                 }
             }
 
@@ -493,18 +354,18 @@ namespace Checkbook.Api.Tests.Repositories
             /// Verifies the correct entity from the context is returned.
             /// </summary>
             [TestMethod]
-            public void ReturnsBudgetFromContext()
+            public void ReturnsCategoryFromContext()
             {
                 // Act.
-                Budget actual;
+                Category actual;
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
-                    BudgetsRepository repository = new BudgetsRepository(context);
-                    actual = repository.Add(this.budget, this.userId);
+                    CategoriesRepository repository = new CategoriesRepository(context);
+                    actual = repository.Add(this.category, this.userId);
                 }
 
                 // Assert.
-                long expectedId = 6;
+                long expectedId = 5;
                 Assert.AreEqual(expectedId, actual.Id, "The ID for the entity should match.");
             }
 
@@ -512,27 +373,27 @@ namespace Checkbook.Api.Tests.Repositories
             /// Verifies the new entity is in the context.
             /// </summary>
             [TestMethod]
-            public void AddsBudgetToContext()
+            public void AddsCategoryToContext()
             {
                 // Act.
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
-                    BudgetsRepository repository = new BudgetsRepository(context);
-                    repository.Add(this.budget, this.userId);
+                    CategoriesRepository repository = new CategoriesRepository(context);
+                    repository.Add(this.category, this.userId);
                 }
 
                 // Assert.
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
-                    int expectedBudgetCount = 6;
-                    Assert.AreEqual(expectedBudgetCount, context.Budgets.Count(), "There should be the correct number of budgets.");
+                    int expectedCategoryCount = 5;
+                    Assert.AreEqual(expectedCategoryCount, context.Categories.Count(), "There should be the correct number of categories.");
 
-                    long expectedId = 6;
-                    Budget actual = ContextDataService.GetBudgetsSet(context)
+                    long expectedId = 5;
+                    Category actual = ContextDataService.GetCategoriesSet(context)
                         .FirstOrDefault(x => x.Id == expectedId);
-                    Assert.IsNotNull(actual, "A budget should be found.");
+                    Assert.IsNotNull(actual, "A category should be found.");
 
-                    Budget expected = this.budget;
+                    Category expected = this.category;
                     Assert.AreEqual(expected.Id, actual.Id, "The ID for the entity should match.");
                     Assert.AreEqual(expected.Name, actual.Name, "The name for the entity should match.");
                     Assert.AreEqual(expected.UserId, actual.UserId, "The user ID for the entity should match.");
@@ -546,7 +407,7 @@ namespace Checkbook.Api.Tests.Repositories
             public void ThrowsExceptionWhenIdPresent()
             {
                 // Arrange.
-                this.budget.Id = 5;
+                this.category.Id = 5;
 
                 // Act.
                 Exception caughtException = null;
@@ -554,8 +415,8 @@ namespace Checkbook.Api.Tests.Repositories
                 {
                     using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                     {
-                        BudgetsRepository repository = new BudgetsRepository(context);
-                        repository.Add(this.budget, this.userId);
+                        CategoriesRepository repository = new CategoriesRepository(context);
+                        repository.Add(this.category, this.userId);
                     }
                 }
                 catch (Exception ex)
@@ -566,7 +427,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
-                string exceptionMessage = "A new budget without a specified ID should have been used. To update a budget, use the Save method.\r\nParameter name: budget.Id";
+                string exceptionMessage = "A new category without a specified ID should have been used. To update a category, use the Save method.\r\nParameter name: category.Id";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
 
@@ -574,10 +435,10 @@ namespace Checkbook.Api.Tests.Repositories
             /// Verifies exception when buedget has a zero user ID.
             /// </summary>
             [TestMethod]
-            public void ThrowsExceptionWhenNewBudgetWithZeroUserId()
+            public void ThrowsExceptionWhenNewCategoryWithZeroUserId()
             {
                 // Arrange.
-                this.budget.UserId = 0;
+                this.category.UserId = 0;
                 this.userId = 1;
 
                 // Act.
@@ -586,8 +447,8 @@ namespace Checkbook.Api.Tests.Repositories
                 {
                     using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                     {
-                        BudgetsRepository repository = new BudgetsRepository(context);
-                        repository.Add(this.budget, this.userId);
+                        CategoriesRepository repository = new CategoriesRepository(context);
+                        repository.Add(this.category, this.userId);
                     }
                 }
                 catch (Exception ex)
@@ -598,7 +459,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
-                string exceptionMessage = "A budget is expected to have a user ID.\r\nParameter name: budget.UserId";
+                string exceptionMessage = "A category is expected to have a user ID.\r\nParameter name: category.UserId";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
 
@@ -609,7 +470,7 @@ namespace Checkbook.Api.Tests.Repositories
             public void ThrowsExceptionWhenZeroUserIdPassedIn()
             {
                 // Arrange.
-                this.budget.UserId = 1;
+                this.category.UserId = 1;
                 this.userId = 0;
 
                 // Act.
@@ -618,8 +479,8 @@ namespace Checkbook.Api.Tests.Repositories
                 {
                     using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                     {
-                        BudgetsRepository repository = new BudgetsRepository(context);
-                        repository.Add(this.budget, this.userId);
+                        CategoriesRepository repository = new CategoriesRepository(context);
+                        repository.Add(this.category, this.userId);
                     }
                 }
                 catch (Exception ex)
@@ -635,13 +496,13 @@ namespace Checkbook.Api.Tests.Repositories
             }
 
             /// <summary>
-            /// Verifies exception when budget user ID does not match the one passed in.
+            /// Verifies exception when category user ID does not match the one passed in.
             /// </summary>
             [TestMethod]
-            public void ThrowsExceptionWhenBudgetWithMismatchedUserIds()
+            public void ThrowsExceptionWhenCategoryWithMismatchedUserIds()
             {
                 // Arrange.
-                this.budget.UserId = 1;
+                this.category.UserId = 1;
                 this.userId = 2;
 
                 // Act.
@@ -650,8 +511,8 @@ namespace Checkbook.Api.Tests.Repositories
                 {
                     using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                     {
-                        BudgetsRepository repository = new BudgetsRepository(context);
-                        repository.Add(this.budget, this.userId);
+                        CategoriesRepository repository = new CategoriesRepository(context);
+                        repository.Add(this.category, this.userId);
                     }
                 }
                 catch (Exception ex)
@@ -662,7 +523,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
-                string exceptionMessage = "A user ID is expected to match the passed in user ID for a budget.\r\nParameter name: budget.UserId";
+                string exceptionMessage = "A user ID is expected to match the passed in user ID for a category.\r\nParameter name: category.UserId";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
         }
@@ -671,12 +532,12 @@ namespace Checkbook.Api.Tests.Repositories
         /// Tests for the Save() method.
         /// </summary>
         [TestClass]
-        public class SaveMethod : BudgetsRepositoryTests
+        public class SaveMethod : CategoriesRepositoryTests
         {
             /// <summary>
-            /// The budget used as an input.
+            /// The category used as an input.
             /// </summary>
-            private Budget budget;
+            private Category category;
 
             /// <summary>
             /// The user ID used as an input.
@@ -686,7 +547,7 @@ namespace Checkbook.Api.Tests.Repositories
             /// <summary>
             /// Stub data for the database set.
             /// </summary>
-            private List<Budget> entities;
+            private List<Category> entities;
 
             /// <summary>
             /// Initializes the tests for the method.
@@ -698,19 +559,18 @@ namespace Checkbook.Api.Tests.Repositories
 
                 // Initialize the input.
                 this.userId = 1;
-                this.budget = new Budget
+                this.category = new Category
                 {
                     Id = 2,
-                    Name = "Second Budget x",
+                    Name = "Second Category x",
                     UserId = this.userId,
-                    CategoryId = 1,
                 };
 
                 // Initialize the database set.
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
                     DatabaseSeed.AddEntities(context);
-                    this.entities = ContextDataService.GetBudgets(context);
+                    this.entities = ContextDataService.GetCategories(context);
                 }
             }
 
@@ -718,44 +578,44 @@ namespace Checkbook.Api.Tests.Repositories
             /// Verifies the correct entity from the context is returned.
             /// </summary>
             [TestMethod]
-            public void ReturnsBudgetFromContext()
+            public void ReturnsCategoryFromContext()
             {
                 // Act.
-                Budget actual;
+                Category actual;
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
-                    BudgetsRepository repository = new BudgetsRepository(context);
-                    actual = repository.Save(this.budget, this.userId);
+                    CategoriesRepository repository = new CategoriesRepository(context);
+                    actual = repository.Save(this.category, this.userId);
                 }
 
                 // Assert.
-                Assert.AreEqual(this.budget.Id, actual.Id, "The ID for the entity should match.");
+                Assert.AreEqual(this.category.Id, actual.Id, "The ID for the entity should match.");
             }
 
             /// <summary>
             /// Verifies the entity was updated in the context.
             /// </summary>
             [TestMethod]
-            public void UpdatesBudgetInTheContext()
+            public void UpdatesCategoryInTheContext()
             {
                 // Act.
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
-                    BudgetsRepository repository = new BudgetsRepository(context);
-                    repository.Save(this.budget, this.userId);
+                    CategoriesRepository repository = new CategoriesRepository(context);
+                    repository.Save(this.category, this.userId);
                 }
 
                 // Assert.
                 using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                 {
-                    int expectedBudgetCount = 5;
-                    Assert.AreEqual(expectedBudgetCount, context.Budgets.Count(), "The number of budgets should not change.");
+                    int expectedCategoryCount = 4;
+                    Assert.AreEqual(expectedCategoryCount, context.Categories.Count(), "The number of categories should not change.");
 
-                    Budget actual = ContextDataService.GetBudgetsSet(context)
-                        .FirstOrDefault(x => x.Id == this.budget.Id);
-                    Assert.IsNotNull(actual, "A budget should be found.");
+                    Category actual = ContextDataService.GetCategoriesSet(context)
+                        .FirstOrDefault(x => x.Id == this.category.Id);
+                    Assert.IsNotNull(actual, "A category should be found.");
 
-                    Budget expected = this.budget;
+                    Category expected = this.category;
                     Assert.AreEqual(expected.Id, actual.Id, "The ID for the entity should match.");
                     Assert.AreEqual(expected.Name, actual.Name, "The name for the entity should match.");
                     Assert.AreEqual(expected.UserId, actual.UserId, "The user ID for the entity should match.");
@@ -769,7 +629,7 @@ namespace Checkbook.Api.Tests.Repositories
             public void ThrowsExceptionWhenIdZero()
             {
                 // Arrange.
-                this.budget.Id = 0;
+                this.category.Id = 0;
 
                 // Act.
                 Exception caughtException = null;
@@ -777,8 +637,8 @@ namespace Checkbook.Api.Tests.Repositories
                 {
                     using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                     {
-                        BudgetsRepository repository = new BudgetsRepository(context);
-                        repository.Save(this.budget, this.userId);
+                        CategoriesRepository repository = new CategoriesRepository(context);
+                        repository.Save(this.category, this.userId);
                     }
                 }
                 catch (Exception ex)
@@ -789,18 +649,18 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
-                string exceptionMessage = "A budget with a specified ID should have been used. To add a budget, use the Add method.\r\nParameter name: budget.Id";
+                string exceptionMessage = "A category with a specified ID should have been used. To add a category, use the Add method.\r\nParameter name: category.Id";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
 
             /// <summary>
-            /// Verifies exception when budget has a zero user ID.
+            /// Verifies exception when category has a zero user ID.
             /// </summary>
             [TestMethod]
-            public void ThrowsExceptionWhenBudgetWithZeroUserId()
+            public void ThrowsExceptionWhenCategoryWithZeroUserId()
             {
                 // Arrange.
-                this.budget.UserId = 0;
+                this.category.UserId = 0;
                 this.userId = 1;
 
                 // Act.
@@ -809,8 +669,8 @@ namespace Checkbook.Api.Tests.Repositories
                 {
                     using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                     {
-                        BudgetsRepository repository = new BudgetsRepository(context);
-                        repository.Save(this.budget, this.userId);
+                        CategoriesRepository repository = new CategoriesRepository(context);
+                        repository.Save(this.category, this.userId);
                     }
                 }
                 catch (Exception ex)
@@ -821,7 +681,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
-                string exceptionMessage = "A budget is expected to have a user ID.\r\nParameter name: budget.UserId";
+                string exceptionMessage = "A category is expected to have a user ID.\r\nParameter name: category.UserId";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
 
@@ -829,10 +689,10 @@ namespace Checkbook.Api.Tests.Repositories
             /// Verifies exception when null user ID passed in.
             /// </summary>
             [TestMethod]
-            public void ThrowsExceptionWhenZeroUserIdPasedIn()
+            public void ThrowsExceptionWhenNewZeroUserIdPasedIn()
             {
                 // Arrange.
-                this.budget.UserId = 1;
+                this.category.UserId = 1;
                 this.userId = 0;
 
                 // Act.
@@ -841,8 +701,8 @@ namespace Checkbook.Api.Tests.Repositories
                 {
                     using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                     {
-                        BudgetsRepository repository = new BudgetsRepository(context);
-                        repository.Save(this.budget, this.userId);
+                        CategoriesRepository repository = new CategoriesRepository(context);
+                        repository.Save(this.category, this.userId);
                     }
                 }
                 catch (Exception ex)
@@ -858,13 +718,13 @@ namespace Checkbook.Api.Tests.Repositories
             }
 
             /// <summary>
-            /// Verifies exception when budget user ID does not match the one passed in.
+            /// Verifies exception when category user ID does not match the one passed in.
             /// </summary>
             [TestMethod]
-            public void ThrowsExceptionWhenBudgetWithMismatchedUserIds()
+            public void ThrowsExceptionWhenCategoryWithMismatchedUserIds()
             {
                 // Arrange.
-                this.budget.UserId = 1;
+                this.category.UserId = 1;
                 this.userId = 2;
 
                 // Act.
@@ -873,8 +733,8 @@ namespace Checkbook.Api.Tests.Repositories
                 {
                     using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
                     {
-                        BudgetsRepository repository = new BudgetsRepository(context);
-                        repository.Save(this.budget, this.userId);
+                        CategoriesRepository repository = new CategoriesRepository(context);
+                        repository.Save(this.category, this.userId);
                     }
                 }
                 catch (Exception ex)
@@ -885,7 +745,7 @@ namespace Checkbook.Api.Tests.Repositories
                 // Assert.
                 Assert.IsNotNull(caughtException, "An exception should be thrown.");
                 Assert.IsInstanceOfType(caughtException, typeof(ArgumentException), "This should be an argument exception.");
-                string exceptionMessage = "A user ID is expected to match the passed in user ID for a budget.\r\nParameter name: budget.UserId";
+                string exceptionMessage = "A user ID is expected to match the passed in user ID for a category.\r\nParameter name: category.UserId";
                 Assert.AreEqual(exceptionMessage, caughtException.Message, "The exception message should be correct.");
             }
         }

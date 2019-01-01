@@ -25,7 +25,7 @@ export class AccountsService {
     constructor(
         private http: HttpClient,
     ) {
-        let baseApiUrl: string = 'http://localhost:11111/api/';
+        const baseApiUrl = 'http://localhost:11111/api/';
         this.baseApiUrl = baseApiUrl + 'accounts/';
     }
 
@@ -34,7 +34,7 @@ export class AccountsService {
      * @returns             An observable list of bank accounts.
      */
     public getBankAccounts(): Observable<BankAccount[]> {
-        let url: string = this.baseApiUrl + 'my-accounts/';
+        const url: string = this.baseApiUrl + 'my-accounts/';
         return this.http.get<BankAccount[]>(url);
     }
 
@@ -43,7 +43,7 @@ export class AccountsService {
      * @returns             An observable list of merchant accounts.
      */
     public getMerchantAccounts(): Observable<MerchantAccount[]> {
-        let url: string = this.baseApiUrl + 'merchants/';
+        const url: string = this.baseApiUrl + 'merchants/';
         return this.http.get<MerchantAccount[]>(url);
     }
 
@@ -53,7 +53,7 @@ export class AccountsService {
      * @returns             An observable account.
      */
     public get(id: string): Observable<Account> {
-        let url: string = this.baseApiUrl + encodeURIComponent(id) + '/';
+        const url: string = this.baseApiUrl + encodeURIComponent(id) + '/';
         return this.http.get<Account>(url);
     }
 

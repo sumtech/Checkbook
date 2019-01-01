@@ -359,5 +359,439 @@ namespace Checkbook.Api.Tests.Controllers
                 Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
             }
         }
+
+        /// <summary>
+        /// Tests for the Post() method.
+        /// </summary>
+        [TestClass]
+        public class PostMethod : AccountsControllerTests
+        {
+            /// <summary>
+            /// The account used as an input.
+            /// </summary>
+            private Account account;
+
+            /// <summary>
+            /// The user ID used as an input.
+            /// </summary>
+            private long userId;
+
+            /// <summary>
+            /// Stub of the account returned by the repository.
+            /// </summary>
+            private Account stubAccount;
+
+            /// <summary>
+            /// Initializes the tests for the method.
+            /// </summary>
+            [TestInitialize]
+            public override void Initialize()
+            {
+                base.Initialize();
+
+                this.userId = 1;
+                this.account = new Account();
+
+                // Initialize the mock repository method.
+                this.stubAccount = new Account();
+                this.mockAccountsRepository
+                    .Setup(m => m.Add(It.IsAny<Account>(), It.IsAny<long>()))
+                    .Returns(this.stubAccount);
+            }
+
+            /// <summary>
+            /// Verifies the result from the repository is retrieved correctly.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsRepositoryResult()
+            {
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Post(this.account);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.Verify(m => m.Add(this.account, this.userId), Times.Once, "The add method should have been called.");
+                this.mockAccountsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(okResult, "An OK response should have been returned.");
+                Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
+                Assert.AreEqual(this.stubAccount, okResult.Value, "The result from the repository should have been returned.");
+            }
+
+            /// <summary>
+            /// Verifies the result from the repository is retrieved correctly.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsBadRequestErrorWhenAccountNull()
+            {
+                // Arrange.
+                this.account = null;
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Post(this.account);
+                BadRequestObjectResult badRequestResult = result as BadRequestObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(badRequestResult, "A bad request response should have been returned.");
+                Assert.AreEqual(400, badRequestResult.StatusCode, "The status code from the response should have been 405.");
+                string expectedMessage = "An account must be passed in for it to be saved.";
+                Assert.AreEqual(expectedMessage, badRequestResult.Value, "The error message should have been the result.");
+            }
+
+            /// <summary>
+            /// Verifies that general exceptions are handled correctly.
+            /// </summary>
+            [TestMethod]
+            public void HandlesGeneralException()
+            {
+                // Arrange.
+                this.mockAccountsRepository
+                    .Setup(m => m.Add(It.IsAny<Account>(), It.IsAny<long>()))
+                    .Throws(new Exception());
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Post(this.account);
+                ObjectResult objectResult = result as ObjectResult;
+
+                // Assert.
+                Assert.IsNotNull(objectResult, "An object result should have been returned.");
+                Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
+                string expectedMessage = "There was an error saving the account.";
+                Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
+            }
+
+            /// <summary>
+            /// Verifies the User ID gets added to the bank account before using the repository.
+            /// </summary>
+            [TestMethod]
+            public void AddsUserIdToBankAccountWithZeroUserId()
+            {
+                // Arrange.
+                this.account.IsUserAccount = true;
+                this.account.UserId = 0;
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Post(this.account);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.Verify(m => m.Add(It.Is<Account>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
+            }
+
+            /// <summary>
+            /// Verifies the User ID gets added to the bank account before using the repository.
+            /// </summary>
+            [TestMethod]
+            public void AddsUserIdToBankAccountWithNullUserId()
+            {
+                // Arrange.
+                this.account.IsUserAccount = true;
+                this.account.UserId = null;
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Post(this.account);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.Verify(m => m.Add(It.Is<Account>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
+            }
+
+            /// <summary>
+            /// Verifies the User ID does not change for a bank account before using the repository.
+            /// </summary>
+            [TestMethod]
+            public void IgnoresNonZeroUserIdForBankAccount()
+            {
+                // Arrange.
+                this.account.IsUserAccount = true;
+                this.account.UserId = 123;
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Post(this.account);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.Verify(m => m.Add(It.Is<Account>(x => x.UserId == 123), It.IsAny<long>()), Times.Once, "The user ID for the entity should not have changed.");
+            }
+
+            /// <summary>
+            /// Verifies the User ID does not get added to the merchant account before using the repository.
+            /// </summary>
+            [TestMethod]
+            public void IgnoresZeroUserIdForMerchantAccount()
+            {
+                // Arrange.
+                this.account.IsUserAccount = false;
+                this.account.UserId = 0;
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Post(this.account);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.Verify(m => m.Add(It.Is<Account>(x => x.UserId == 0), It.IsAny<long>()), Times.Once, "The user ID for the entity should not have changed.");
+            }
+
+            /// <summary>
+            /// Verifies the User ID does not get added to the merchant account before using the repository.
+            /// </summary>
+            [TestMethod]
+            public void IgnoresNonZeroUserIdForMerchantAccount()
+            {
+                // Arrange.
+                this.account.IsUserAccount = false;
+                this.account.UserId = 123;
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Post(this.account);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.Verify(m => m.Add(It.Is<Account>(x => x.UserId == 123), It.IsAny<long>()), Times.Once, "The user ID for the entity should not have changed.");
+            }
+        }
+
+        /// <summary>
+        /// Tests for the Put() method.
+        /// </summary>
+        [TestClass]
+        public class PutMethod : AccountsControllerTests
+        {
+            /// <summary>
+            /// The id used as an input.
+            /// </summary>
+            private long id;
+
+            /// <summary>
+            /// The user ID used as an input.
+            /// </summary>
+            private long userId;
+
+            /// <summary>
+            /// The account used as an input.
+            /// </summary>
+            private Account account;
+
+            /// <summary>
+            /// Stub of the account returned by the repository.
+            /// </summary>
+            private Account stubAccount;
+
+            /// <summary>
+            /// Initializes the tests for the method.
+            /// </summary>
+            [TestInitialize]
+            public override void Initialize()
+            {
+                base.Initialize();
+
+                this.id = 7;
+                this.account = new Account
+                {
+                    Id = this.id,
+                };
+                this.userId = 1;
+
+                // Initialize the mock repository method.
+                this.stubAccount = new Account();
+                this.mockAccountsRepository
+                    .Setup(m => m.Save(It.IsAny<Account>(), It.IsAny<long>()))
+                    .Returns(this.stubAccount);
+            }
+
+            /// <summary>
+            /// Verifies the result from the repository is retrieved correctly.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsRepositoryResult()
+            {
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.account);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.Verify(m => m.Save(this.account, this.userId), Times.Once, "The save method should have been called.");
+                this.mockAccountsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(okResult, "An OK response should have been returned.");
+                Assert.AreEqual(200, okResult.StatusCode, "The status code from the response should have been 200.");
+                Assert.AreEqual(this.stubAccount, okResult.Value, "The result from the repository should have been returned.");
+            }
+
+            /// <summary>
+            /// Verifies the result from the repository is retrieved correctly.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsBadRequestErrorWhenAccountNull()
+            {
+                // Arrange.
+                this.account = null;
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.account);
+                BadRequestObjectResult badRequestResult = result as BadRequestObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(badRequestResult, "A bad request response should have been returned.");
+                Assert.AreEqual(400, badRequestResult.StatusCode, "The status code from the response should have been 405.");
+                string expectedMessage = "An account must be passed in for it to be saved.";
+                Assert.AreEqual(expectedMessage, badRequestResult.Value, "The error message should have been the result.");
+            }
+
+            /// <summary>
+            /// Verifies the result from the repository is retrieved correctly.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsBadRequestErrorWhenAccountIdsMismatch()
+            {
+                // Arrange.
+                this.id = this.id + 2;
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.account);
+                BadRequestObjectResult badRequestResult = result as BadRequestObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.VerifyNoOtherCalls();
+
+                Assert.IsNotNull(badRequestResult, "A bad request response should have been returned.");
+                Assert.AreEqual(400, badRequestResult.StatusCode, "The status code from the response should have been 405.");
+                string expectedMessage = "The account ID values did not match.";
+                Assert.AreEqual(expectedMessage, badRequestResult.Value, "The error message should have been the result.");
+            }
+
+            /// <summary>
+            /// Verifies that general exceptions are handled correctly.
+            /// </summary>
+            [TestMethod]
+            public void HandlesGeneralException()
+            {
+                // Arrange.
+                this.mockAccountsRepository
+                    .Setup(m => m.Save(It.IsAny<Account>(), It.IsAny<long>()))
+                    .Throws(new Exception());
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.account);
+                ObjectResult objectResult = result as ObjectResult;
+
+                // Assert.
+                Assert.IsNotNull(objectResult, "An object result should have been returned.");
+                Assert.AreEqual(500, objectResult.StatusCode, "The status code from the response should have been 500.");
+                string expectedMessage = "There was an error saving the account.";
+                Assert.AreEqual(expectedMessage, objectResult.Value, "The error message should have been the result.");
+            }
+
+            /// <summary>
+            /// Verifies the User ID gets added to the bank account before using the repository.
+            /// </summary>
+            [TestMethod]
+            public void AddsUserIdToBankAccountWithZeroUserId()
+            {
+                // Arrange.
+                this.account.IsUserAccount = true;
+                this.account.UserId = 0;
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.account);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.Verify(m => m.Save(It.Is<Account>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
+            }
+
+            /// <summary>
+            /// Verifies the User ID gets added to the bank account before using the repository.
+            /// </summary>
+            [TestMethod]
+            public void AddsUserIdToBankAccountWithNullUserId()
+            {
+                // Arrange.
+                this.account.IsUserAccount = true;
+                this.account.UserId = null;
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.account);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.Verify(m => m.Save(It.Is<Account>(x => x.UserId == this.userId), It.IsAny<long>()), Times.Once, "The user ID should have been added to the entity.");
+            }
+
+            /// <summary>
+            /// Verifies the User ID does not change for a bank account before using the repository.
+            /// </summary>
+            [TestMethod]
+            public void IgnoresNonZeroUserIdForBankAccount()
+            {
+                // Arrange.
+                this.account.IsUserAccount = true;
+                this.account.UserId = 123;
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.account);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.Verify(m => m.Save(It.Is<Account>(x => x.UserId == 123), It.IsAny<long>()), Times.Once, "The user ID for the entity should not have changed.");
+            }
+
+            /// <summary>
+            /// Verifies the User ID does not get added to the merchant account before using the repository.
+            /// </summary>
+            [TestMethod]
+            public void IgnoresZeroUserIdForMerchantAccount()
+            {
+                // Arrange.
+                this.account.IsUserAccount = false;
+                this.account.UserId = 0;
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.account);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.Verify(m => m.Save(It.Is<Account>(x => x.UserId == 0), It.IsAny<long>()), Times.Once, "The user ID for the entity should not have changed.");
+            }
+
+            /// <summary>
+            /// Verifies the User ID does not get added to the merchant account before using the repository.
+            /// </summary>
+            [TestMethod]
+            public void IgnoresNonZeroUserIdForMerchantAccount()
+            {
+                // Arrange.
+                this.account.IsUserAccount = false;
+                this.account.UserId = 123;
+
+                // Act.
+                AccountsController controller = new AccountsController(this.mockAccountsRepository.Object);
+                IActionResult result = controller.Put(this.id, this.account);
+                OkObjectResult okResult = result as OkObjectResult;
+
+                // Assert.
+                this.mockAccountsRepository.Verify(m => m.Save(It.Is<Account>(x => x.UserId == 123), It.IsAny<long>()), Times.Once, "The user ID for the entity should not have changed.");
+            }
+        }
     }
 }

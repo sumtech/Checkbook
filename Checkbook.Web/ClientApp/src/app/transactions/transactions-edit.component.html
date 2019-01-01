@@ -47,7 +47,7 @@
             <tr *ngFor="let item of transaction.items; let i = index">
                 <td>
                     <mat-form-field>
-                        <mat-select name="transaction[{{i}}].budgetId" required [(ngModel)]="item.budgetId">
+                        <mat-select name="transaction[{{i}}].budgetId" placeholder="Budget" required [(ngModel)]="item.budgetId">
                             <mat-option *ngFor="let budget of budgets" [value]="budget.id">{{budget.category.name + ':'
                                 + budget.name}}</mat-option>
                         </mat-select>
@@ -55,12 +55,12 @@
                 </td>
                 <td>
                     <mat-form-field>
-                        <input type="text" name="transaction[{{i}}].description" matInput [(ngModel)]="item.description">
+                        <input type="text" name="transaction[{{i}}].description" placeholder="Description" matInput [(ngModel)]="item.description">
                     </mat-form-field>
                 </td>
                 <td>
                     <mat-form-field>
-                        <input type="number" name="transaction[{{i}}].amount" required matInput [(ngModel)]="item.amount" />
+                        <input type="number" name="transaction[{{i}}].amount" placeholder="Amount" required matInput [(ngModel)]="item.amount" />
                     </mat-form-field>
                 </td>
                 <td>
@@ -72,7 +72,7 @@
                 <td></td>
                 <td>
                     <mat-form-field>
-                        <input type="number" name="grandTotal" readonly matInput [ngModel]="grandTotal()" />
+                        <input type="text" name="grandTotal" readonly matInput [ngModel]="grandTotal() | currency:'USD'" />
                     </mat-form-field>
                 </td>
                 <td></td>

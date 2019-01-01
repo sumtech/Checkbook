@@ -1,0 +1,31 @@
+<div>
+    <!-- Cancel -->
+    <a style="float:right;" [routerLink]="['/budgets']" *ngIf="budget" mat-button color="primary">Cancel</a>
+
+    <!-- Heading -->
+    <h1>Budget</h1>
+
+    <form *ngIf="budget" (ngSubmit)="onSubmit()" #budgetForm="ngForm">
+
+        <!-- ID -->
+        <mat-form-field>
+            <input type="text" [value]="budget.id" placeholder="Id" readonly matInput>
+            <input type="hidden" id="budget-id" name="id" [value]="budget.id" />
+        </mat-form-field>
+
+        <!-- Category -->
+        <mat-form-field>
+            <mat-select id="category-id" name="category-id" placeholder="Category" required [(ngModel)]="budget.categoryId">
+                <mat-option *ngFor="let category of categories" [value]="category.id">{{category.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Name -->
+        <mat-form-field>
+            <input type="text" name="name" placeholder="Name" matInput [(ngModel)]="budget.name">
+        </mat-form-field>
+
+        <!-- Save -->
+        <button type="submit" mat-button color="primary" [disabled]="!budgetForm.form.valid">Save</button>
+    </form>
+</div>

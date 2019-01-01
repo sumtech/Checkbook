@@ -99,10 +99,8 @@ export class TransactionsEditComponent implements OnInit {
      * @param item                  The item to remove.
      */
     remove(item: TransactionItem) {
-        let index: number = this.transaction.items.indexOf(item);
+        const index: number = this.transaction.items.indexOf(item);
         this.transaction.items.splice(index, 1);
-
-        ////delete this.transaction.items[index];
     }
 
     /**
@@ -114,8 +112,8 @@ export class TransactionsEditComponent implements OnInit {
             return 0;
         }
 
-        let total: number = 0;
-        for (let i: number = 0, len: number = this.transaction.items.length; i < len; i++) {
+        let total = 0;
+        for (let i = 0, len: number = this.transaction.items.length; i < len; i++) {
             if (this.transaction.items[i].amount) {
                 total += this.transaction.items[i].amount;
             }

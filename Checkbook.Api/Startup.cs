@@ -4,16 +4,16 @@ namespace Checkbook.Api
 {
     using System;
     using System.Collections.Generic;
+    using System.Data.Common;
     using Checkbook.Api.Models;
     using Checkbook.Api.Repositories;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Data.Sqlite;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
-    using Microsoft.Data.Sqlite;
-    using System.Data.Common;
 
     /// <summary>
     /// The startup configuration methods.
@@ -76,6 +76,7 @@ namespace Checkbook.Api
 
             services.AddScoped<IAccountsRepository, AccountsRepository>();
             services.AddScoped<IBudgetsRepository, BudgetsRepository>();
+            services.AddScoped<ICategoriesRepository, CategoriesRepository>();
             services.AddScoped<ITransactionsRepository, TransactionsRepository>();
         }
 
@@ -273,6 +274,7 @@ namespace Checkbook.Api
                 Id = 1,
                 Date = DateTime.Now.AddDays(-7),
                 FromAccountId = bankAccount1.Id,
+                UserId = user1.Id,
                 ToAccountId = merchantAccount1.Id,
                 Items = new List<TransactionItem>
                 {
@@ -291,6 +293,7 @@ namespace Checkbook.Api
                 Date = DateTime.Now.AddDays(-5),
                 FromAccountId = bankAccount1.Id,
                 ToAccountId = merchantAccount2.Id,
+                UserId = user1.Id,
                 Items = new List<TransactionItem>
                 {
                     new TransactionItem
@@ -308,6 +311,7 @@ namespace Checkbook.Api
                 Date = DateTime.Now.AddDays(-2),
                 FromAccountId = bankAccount1.Id,
                 ToAccountId = merchantAccount3.Id,
+                UserId = user1.Id,
                 Items = new List<TransactionItem>
                 {
                     new TransactionItem

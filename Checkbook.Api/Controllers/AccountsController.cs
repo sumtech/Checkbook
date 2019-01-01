@@ -113,5 +113,89 @@ namespace Checkbook.Api.Controllers
 
             return this.Ok(account);
         }
+
+        /// <summary>
+        /// Adds an account.
+        /// </summary>
+        /// <param name="account">The account information.</param>
+        /// <returns>The saved account.</returns>
+        [HttpPost("api/accounts")]
+        [ProducesResponseType(typeof(List<Account>), 200)]
+        [ProducesResponseType(typeof(string), 500)]
+        [ProducesResponseType(404)]
+        public IActionResult Post([FromBody] Account account)
+        {
+            long userId = 1;
+
+            if (account == null)
+            {
+                return this.BadRequest("An account must be passed in for it to be saved.");
+            }
+
+            if (account.IsUserAccount)
+            {
+                if (account.UserId == null || account.UserId == 0)
+                {
+                    account.UserId = userId;
+                }
+            }
+
+            Account savedAccount;
+            try
+            {
+                savedAccount = this.accountsRepository.Add(account, userId);
+            }
+            catch
+            {
+                return this.StatusCode(500, "There was an error saving the account.");
+            }
+
+            return this.Ok(savedAccount);
+        }
+
+        /// <summary>
+        /// Updates an account.
+        /// </summary>
+        /// <param name="accountId">The unique ID for the account.</param>
+        /// <param name="account">The account information.</param>
+        /// <returns>The updated account.</returns>
+        [HttpPut("api/accounts/{accountId:long}")]
+        [ProducesResponseType(typeof(List<Account>), 200)]
+        [ProducesResponseType(typeof(string), 500)]
+        [ProducesResponseType(404)]
+        public IActionResult Put(long accountId, [FromBody] Account account)
+        {
+            long userId = 1;
+
+            if (account == null)
+            {
+                return this.BadRequest("An account must be passed in for it to be saved.");
+            }
+
+            if (account.Id != accountId)
+            {
+                return this.BadRequest("The account ID values did not match.");
+            }
+
+            if (account.IsUserAccount)
+            {
+                if (account.UserId == null || account.UserId == 0)
+                {
+                    account.UserId = userId;
+                }
+            }
+
+            Account savedAccount;
+            try
+            {
+                savedAccount = this.accountsRepository.Save(account, userId);
+            }
+            catch
+            {
+                return this.StatusCode(500, "There was an error saving the account.");
+            }
+
+            return this.Ok(savedAccount);
+        }
     }
 }

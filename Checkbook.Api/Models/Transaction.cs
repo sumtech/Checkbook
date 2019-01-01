@@ -46,6 +46,17 @@ namespace Checkbook.Api.Models
         public Account ToAccount { get; set; }
 
         /// <summary>
+        /// Gets or sets the unique identifier for the user to which this
+        /// transaction belongs.
+        /// </summary>
+        public long UserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user to which this transaction belongs.
+        /// </summary>
+        public User User { get; set; }
+
+        /// <summary>
         /// Gets or sets the collection of items for this transaction.
         /// </summary>
         public virtual List<TransactionItem> Items { get; set; }

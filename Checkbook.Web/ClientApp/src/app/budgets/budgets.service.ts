@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
-import { Budget } from './budgets.model';
+import { Budget, Category } from './budgets.model';
 
 /**
  * The service for handling budget information.
@@ -15,7 +15,7 @@ export class BudgetsService {
     /**
      * The base URL for the budget API calls.
      */
-    private baseApiUrl;
+    private baseApiUrl: string;
 
     /**
      * The constructor.
@@ -25,7 +25,7 @@ export class BudgetsService {
     constructor(
         private http: HttpClient,
     ) {
-        let baseApiUrl: string = 'http://localhost:11111/api/';
+        const baseApiUrl = 'http://localhost:11111/api/';
         this.baseApiUrl = baseApiUrl + 'budgets/';
     }
 
@@ -34,7 +34,17 @@ export class BudgetsService {
      * @returns             An observable list of budgets.
      */
     public getAll(): Observable<Budget[]> {
-        let url: string = this.baseApiUrl;
+        const url: string = this.baseApiUrl;
+        return this.http.get<Budget[]>(url);
+    }
+
+    /**
+     * Get the list of budgets which are available and including their current
+     * totals.
+     * @returns             An observable list of budgets.
+     */
+    public getAllWithTotals(): Observable<Budget[]> {
+        const url: string = this.baseApiUrl + 'totals';
         return this.http.get<Budget[]>(url);
     }
 
@@ -43,8 +53,8 @@ export class BudgetsService {
      * @param id            The unique ID for the budget.
      * @returns             An observable budget.
      */
-    public get(id: string): Observable<Budget> {
-        let url: string = this.baseApiUrl + encodeURIComponent(id) + '/';
+    public get(id: number): Observable<Budget> {
+        const url: string = this.baseApiUrl + id;
         return this.http.get<Budget>(url);
     }
 

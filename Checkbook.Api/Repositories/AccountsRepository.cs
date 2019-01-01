@@ -82,15 +82,6 @@ namespace Checkbook.Api.Repositories
                     throw new ArgumentException("The user ID did not match for the bank account.", "userId");
                 }
             }
-            else
-            {
-                // We have a merchant account.
-                // Verify no valid user ID was passed in.
-                if (userId != null && userId != 0)
-                {
-                    throw new ArgumentException("The user ID was not expected for a merchant account.", "userId");
-                }
-            }
 
             return account;
         }
@@ -109,6 +100,12 @@ namespace Checkbook.Api.Repositories
                 throw new ArgumentException("A new account without a specified ID should have been used. To update an account, use the Save method.", "account.Id");
             }
 
+            // Verify we have a user ID.
+            if (userId == null || userId == 0)
+            {
+                throw new ArgumentException("A user ID is expected to be passed in for an account.", "userId");
+            }
+
             if (account.IsUserAccount)
             {
                 // We have a bank account.
@@ -116,11 +113,6 @@ namespace Checkbook.Api.Repositories
                 if (account.UserId == null || account.UserId == 0)
                 {
                     throw new ArgumentException("A bank account is expected to have a user ID.", "account.UserId");
-                }
-
-                if (userId == null || userId == 0)
-                {
-                    throw new ArgumentException("A user ID is expected to be passed in for a bank account.", "userId");
                 }
 
                 if (account.UserId != userId)
@@ -135,11 +127,6 @@ namespace Checkbook.Api.Repositories
                 if (account.UserId != null && account.UserId != 0)
                 {
                     throw new ArgumentException("A merchant account is not expected to have a user ID.", "account.UserId");
-                }
-
-                if (userId != null && userId != 0)
-                {
-                    throw new ArgumentException("A user ID is not expected to be passed in for a merchant account.", "userId");
                 }
             }
 
@@ -163,6 +150,12 @@ namespace Checkbook.Api.Repositories
                 throw new ArgumentException("A new account with a specified ID should have been used. To add an account, use the Add method.", "account.Id");
             }
 
+            // Verify we have a user ID.
+            if (userId == null || userId == 0)
+            {
+                throw new ArgumentException("A user ID is expected to be passed in for an account.", "userId");
+            }
+
             if (account.IsUserAccount)
             {
                 // We have a bank account.
@@ -170,11 +163,6 @@ namespace Checkbook.Api.Repositories
                 if (account.UserId == null || account.UserId == 0)
                 {
                     throw new ArgumentException("A bank account is expected to have a user ID.", "account.UserId");
-                }
-
-                if (userId == null || userId == 0)
-                {
-                    throw new ArgumentException("A user ID is expected to be passed in for a bank account.", "userId");
                 }
 
                 if (account.UserId != userId)
@@ -189,11 +177,6 @@ namespace Checkbook.Api.Repositories
                 if (account.UserId != null && account.UserId != 0)
                 {
                     throw new ArgumentException("A merchant account is not expected to have a user ID.", "account.UserId");
-                }
-
-                if (userId != null && userId != 0)
-                {
-                    throw new ArgumentException("A user ID is not expected to be passed in for a merchant account.", "userId");
                 }
             }
 
