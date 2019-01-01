@@ -23,6 +23,11 @@ body {
     margin: 0;
 }
 
+a {
+    color: $primary-color;
+    text-decoration:none;
+}
+
 form {
     display: flex;
     flex-direction: column;

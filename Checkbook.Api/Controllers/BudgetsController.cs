@@ -57,6 +57,36 @@ namespace Checkbook.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the list of all budgets for the user and includes the current
+        /// totals for each budget.
+        /// </summary>
+        /// <returns>The list of budgets.</returns>
+        [HttpGet("api/budgets/totals")]
+        [ProducesResponseType(typeof(List<BudgetSummary>), 200)]
+        [ProducesResponseType(typeof(string), 500)]
+        public IActionResult GetTotals()
+        {
+            long userId = 1;
+
+            IEnumerable<BudgetSummary> budgets;
+            try
+            {
+                budgets = this.budgetsRepository.GetTotals(userId);
+            }
+            catch
+            {
+                return this.StatusCode(500, "There was an error getting the budgets.");
+            }
+
+            if (budgets == null)
+            {
+                return this.Ok(new List<BudgetSummary>());
+            }
+
+            return this.Ok(budgets);
+        }
+
+        /// <summary>
         /// Gets a specified budget.
         /// </summary>
         /// <param name="budgetId">The unique ID for the budget.</param>

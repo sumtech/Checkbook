@@ -179,6 +179,144 @@ namespace Checkbook.Api.Tests.Repositories
         }
 
         /// <summary>
+        /// Tests for the GetTotals() method.
+        /// </summary>
+        [TestClass]
+        public class GetTotalsMethod : BudgetsRepositoryTests
+        {
+            /// <summary>
+            /// The user ID used as an input.
+            /// </summary>
+            private long userId;
+
+            /// <summary>
+            /// Stub data for the database set.
+            /// </summary>
+            private List<Budget> entities;
+
+            /// <summary>
+            /// Initializes the tests for the method.
+            /// </summary>
+            [TestInitialize]
+            public override void Initialize()
+            {
+                base.Initialize();
+
+                // Initialize the inputs.
+                this.userId = 1;
+
+                // Initialize the database set.
+                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                {
+                    DatabaseSeed.AddEntities(context);
+                    this.entities = ContextDataService.GetBudgets(context)
+                        .Where(a => a.UserId == this.userId)
+                        .ToList();
+                }
+            }
+
+            /// <summary>
+            /// Verifies the entiies from the context are returned.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsBudgetsFromContext()
+            {
+                // Act.
+                List<BudgetSummary> actualList;
+                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                {
+                    BudgetsRepository repository = new BudgetsRepository(context);
+                    actualList = repository.GetTotals(this.userId).ToList();
+                }
+
+                // Assert.
+                Assert.AreEqual(this.entities.Count(), actualList.Count(), "The entity count should match.");
+
+                BudgetSummary expected = new BudgetSummary(this.entities.ElementAt(0));
+                BudgetSummary actual = actualList.ElementAt(0);
+                string index = "first";
+                Assert.AreEqual(expected.Id, actual.Id, $"The ID for the {index} entity should match.");
+                Assert.AreEqual(expected.Name, actual.Name, $"The name for the {index} entity should match.");
+                Assert.AreEqual(expected.UserId, actual.UserId, $"The user ID for the {index} entity should match.");
+            }
+
+            /// <summary>
+            /// Verifies the totals from the context are returned.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsBudgetTotalsFromContext()
+            {
+                // Act.
+                List<BudgetSummary> actualList;
+                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                {
+                    BudgetsRepository repository = new BudgetsRepository(context);
+                    actualList = repository.GetTotals(this.userId).ToList();
+                }
+
+                // Assert.
+                Assert.AreEqual(this.entities.Count(), actualList.Count(), "The entity count should match.");
+
+                BudgetSummary expected = new BudgetSummary(this.entities.ElementAt(0));
+                BudgetSummary actual = actualList.ElementAt(0);
+                string index = "first";
+                Assert.AreNotEqual(0, actual.Balance, "The current total should not be zero.");
+                Assert.AreEqual(expected.Balance, actual.Balance, $"The current total for the {index} entity should match.");
+            }
+
+            /// <summary>
+            /// Verifies the entiies from the context are returned.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsBudgetsOnlyForTheUser()
+            {
+                // Act.
+                List<BudgetSummary> actualList;
+                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                {
+                    BudgetsRepository repository = new BudgetsRepository(context);
+                    actualList = repository.GetTotals(this.userId).ToList();
+                }
+
+                // Assert.
+                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                {
+                    int numberOfBudgetUsers = context.Budgets
+                        .GroupBy(a => a.UserId)
+                        .Count();
+                    Assert.AreNotEqual(numberOfBudgetUsers, 0, "For the test to work there must be more than one user with budgets.");
+                    Assert.AreNotEqual(numberOfBudgetUsers, 1, "For the test to work there must be more than one user with budgets.");
+                }
+
+                foreach (BudgetSummary actual in actualList)
+                {
+                    Assert.AreEqual(this.userId, actual.UserId, "The user ID for each budget should match the input user ID.");
+                }
+            }
+
+            /// <summary>
+            /// Verifies an empty list is returned when no records are found.
+            /// </summary>
+            [TestMethod]
+            public void ReturnsEmptyListWhenNoRecordsFound()
+            {
+                // Arrange.
+                this.userId = 123;
+
+                // Act.
+                List<BudgetSummary> actualList;
+                using (CheckbookContext context = new CheckbookContext(this.dbContextOptions))
+                {
+                    BudgetsRepository repository = new BudgetsRepository(context);
+                    actualList = repository.GetTotals(this.userId).ToList();
+                }
+
+                // Assert.
+                Assert.AreEqual(0, actualList.Count(), "An empty list should be returned.");
+            }
+        }
+
+        /// <summary>
         /// Tests for the Get(id) method.
         /// </summary>
         [TestClass]

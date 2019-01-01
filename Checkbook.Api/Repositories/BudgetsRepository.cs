@@ -44,6 +44,24 @@ namespace Checkbook.Api.Repositories
         }
 
         /// <summary>
+        /// Gets the list of budgets and includes the totals for each budget.
+        /// </summary>
+        /// <param name="userId">The unique identifier for the current user.</param>
+        /// <returns>A list of budgets.</returns>
+        public IEnumerable<BudgetSummary> GetTotals(long userId)
+        {
+            return this.context.Budgets
+                .Include(b => b.Category)
+                .Include(b => b.TransactionItems)
+                .Where(b => b.UserId == userId)
+                .OrderBy(b => b.Category.Name)
+                    .ThenBy(b => b.Name)
+                .ToList()
+                .Select(b => new BudgetSummary(b))
+                .AsEnumerable();
+        }
+
+        /// <summary>
         /// Gets a specified budget record.
         /// </summary>
         /// <param name="budgetId">The unique identifier for the budget.</param>
@@ -53,7 +71,7 @@ namespace Checkbook.Api.Repositories
         {
             if (userId == 0)
             {
-                throw new ArgumentException("", "userId");
+                throw new ArgumentException("A user ID is needed.", "userId");
             }
 
             Budget budget = this.context.Budgets

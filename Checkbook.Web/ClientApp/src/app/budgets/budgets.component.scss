@@ -1,0 +1,8 @@
+@import '~@angular/material/theming';
+@import '../../styles';
+.budget-categories table {
+    max-width: 500px;
+    tr>td:last-child {
+        width: 50px;
+    }
+}

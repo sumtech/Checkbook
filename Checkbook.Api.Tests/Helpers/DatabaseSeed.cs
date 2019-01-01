@@ -134,11 +134,13 @@ namespace Checkbook.Api.Tests.Helpers
                     {
                         Id = 1,
                         BudgetId = 1,
+                        Amount = 10,
                     },
                     new TransactionItem
                     {
                         Id = 2,
                         BudgetId = 2,
+                        Amount = 20,
                     },
                 },
                 IsProcessed = false,
@@ -157,11 +159,13 @@ namespace Checkbook.Api.Tests.Helpers
                     {
                         Id = 3,
                         BudgetId = 1,
+                        Amount = 30,
                     },
                     new TransactionItem
                     {
                         Id = 4,
                         BudgetId = 3,
+                        Amount = 40,
                     },
                 },
                 IsProcessed = false,
@@ -180,6 +184,7 @@ namespace Checkbook.Api.Tests.Helpers
                     {
                         Id = 5,
                         BudgetId = 1,
+                        Amount = 50,
                     },
                 },
                 IsProcessed = false,

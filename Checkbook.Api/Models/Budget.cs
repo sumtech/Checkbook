@@ -2,12 +2,22 @@
 
 namespace Checkbook.Api.Models
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a budget to which finances are being allocated for a future
     /// expense.
     /// </summary>
     public class Budget
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Budget"/> class.
+        /// </summary>
+        public Budget()
+        {
+            this.TransactionItems = new List<TransactionItem>();
+        }
+
         /// <summary>
         /// Gets or sets the unique identifier for this budget.
         /// </summary>
@@ -39,5 +49,11 @@ namespace Checkbook.Api.Models
         /// Gets or sets the user to which this budgetbelongs.
         /// </summary>
         public User User { get; set; }
+
+        /// <summary>
+        /// Gets or sets the transaction items that are associated with this
+        /// budget.
+        /// </summary>
+        public List<TransactionItem> TransactionItems { get; set; }
     }
 }

@@ -51,7 +51,7 @@ namespace Checkbook.Api.Repositories
         {
             if (userId == 0)
             {
-                throw new ArgumentException("", "userId");
+                throw new ArgumentException("A user ID is needed.", "userId");
             }
 
             Category category = this.context.Categories

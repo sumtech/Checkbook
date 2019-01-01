@@ -7,30 +7,37 @@
 
     <h1>Budgets</h1>
 
-    <table mat-table [dataSource]="budgets">
-        <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef>ID</th>
-            <td mat-cell *matCellDef="let budget">{{budget.id}}</td>
-        </ng-container>
+    <div class="budget-categories" *ngFor="let category of categories">
+        <div style="display:flex">
+            <h3>{{category.name}}</h3>
+            <div><a [routerLink]="['/categories/edit/' + category.id]" mat-button color="primary">Edit</a></div>
+        </div>
 
-        <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef>Name</th>
-            <td mat-cell *matCellDef="let budget">{{budget.name}}</td>
-        </ng-container>
+        <table mat-table [dataSource]="category.budgets">
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef>ID</th>
+                <td mat-cell *matCellDef="let budget">{{budget.id}}</td>
+            </ng-container>
 
-        <ng-container matColumnDef="category">
-            <th mat-header-cell *matHeaderCellDef>Category</th>
-            <td mat-cell *matCellDef="let budget">{{budget.category.name}}</td>
-        </ng-container>
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td mat-cell *matCellDef="let budget">{{budget.name}}</td>
+            </ng-container>
 
-        <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let budget">
-                <a [routerLink]="['/budgets/edit/' + budget.id]" mat-button color="primary">Edit</a>
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="balance">
+                <th mat-header-cell *matHeaderCellDef>Balance</th>
+                <td mat-cell *matCellDef="let budget">{{budget.balance ? (budget.balance | currency:'USD') : '--'}}</td>
+            </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-        <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
-    </table>
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let budget">
+                    <a [routerLink]="['/budgets/edit/' + budget.id]" mat-button color="primary">Edit</a>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+        </table>
+    </div>
 </div>

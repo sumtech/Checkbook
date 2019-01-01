@@ -39,6 +39,16 @@ export class BudgetsService {
     }
 
     /**
+     * Get the list of budgets which are available and including their current
+     * totals.
+     * @returns             An observable list of budgets.
+     */
+    public getAllWithTotals(): Observable<Budget[]> {
+        const url: string = this.baseApiUrl + 'totals';
+        return this.http.get<Budget[]>(url);
+    }
+
+    /**
      * Get a specified budget.
      * @param id            The unique ID for the budget.
      * @returns             An observable budget.

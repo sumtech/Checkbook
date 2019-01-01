@@ -4,16 +4,16 @@ namespace Checkbook.Api
 {
     using System;
     using System.Collections.Generic;
+    using System.Data.Common;
     using Checkbook.Api.Models;
     using Checkbook.Api.Repositories;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Data.Sqlite;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
-    using Microsoft.Data.Sqlite;
-    using System.Data.Common;
 
     /// <summary>
     /// The startup configuration methods.

@@ -20,6 +20,16 @@ export class Budget {
      * The name of the budget.
      */
     name: string;
+
+    /**
+     * The category to which this budget belongs.
+     */
+    category: Category;
+
+    /**
+     * The unique identifier for the category to which this budget belongs.
+     */
+    categoryId: number;
 }
 
 /**
@@ -32,8 +42,9 @@ export class Category {
      */
     constructor() {
         this.id = 0;
+        this.budgets = [];
     }
-    
+
     /**
      * The unique identifier for the category.
      */
@@ -43,4 +54,9 @@ export class Category {
      * The name of the category.
      */
     name: string;
+
+    /**
+     * The budgets that belong to this category.
+     */
+    budgets: Budget[];
 }

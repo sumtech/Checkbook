@@ -18,6 +18,13 @@ namespace Checkbook.Api.Repositories
         IEnumerable<Budget> GetAll(long userId);
 
         /// <summary>
+        /// Gets the list of budgets and includes the totals for each budget.
+        /// </summary>
+        /// <param name="userId">The unique identifier for the current user.</param>
+        /// <returns>A list of budgets.</returns>
+        IEnumerable<BudgetSummary> GetTotals(long userId);
+
+        /// <summary>
         /// Gets a specified budget record.
         /// </summary>
         /// <param name="budgetId">The unique identifier for the budget.</param>

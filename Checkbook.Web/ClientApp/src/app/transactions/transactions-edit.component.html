@@ -72,7 +72,7 @@
                 <td></td>
                 <td>
                     <mat-form-field>
-                        <input type="number" name="grandTotal" readonly matInput [ngModel]="grandTotal()" />
+                        <input type="text" name="grandTotal" readonly matInput [ngModel]="grandTotal() | currency:'USD'" />
                     </mat-form-field>
                 </td>
                 <td></td>
